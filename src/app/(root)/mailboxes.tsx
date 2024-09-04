@@ -10,8 +10,9 @@ import { useParams } from "@/hooks/search-params";
 import { mailboxIcon } from "@/lib/mbicon";
 import { cn } from "@/lib/utils";
 import { Mailbox } from "@/schemas/mailbox";
+import { ClassValue } from "clsx";
 import { Icon, LucideIcon } from "lucide-react";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import React from "react";
 
 export const MailboxLoading = () => {};
@@ -19,20 +20,25 @@ export const MailboxLoading = () => {};
 export const MailboxEntry = ({
   mailbox,
   isCollapsed = false,
+  className,
   ...props
 }: {
   mailbox: Mailbox;
   isCollapsed: boolean;
   icon: LucideIcon;
+  className?: ClassValue;
 }) => {
   const router = useRouter();
+
+  console.log("clll", className);
 
   return (
     <div
       data-collapsed={isCollapsed}
       className={cn(
         "hover:bg-muted px-2 py-2 mx-2 cursor-pointer rounded-md flex items-center gap-x-2",
-        isCollapsed && "justify-center"
+        isCollapsed && "justify-center",
+        className
       )}
       onClick={() => router.push(`/${mailbox.name}`)}
     >
@@ -81,6 +87,10 @@ type Props = { isCollapsed: boolean };
 export const Mailboxes = ({ isCollapsed = false }: Props) => {
   const { data } = useMailboxes();
 
+  const pathname = usePathname();
+
+  console.log(pathname);
+
   return (
     <div>
       <div className="py-2 space-y-1">
@@ -91,6 +101,7 @@ export const Mailboxes = ({ isCollapsed = false }: Props) => {
               mailbox={mb}
               isCollapsed={isCollapsed}
               icon={mailboxIcon(mb.attributes)}
+              className={pathname.includes(mb.name) ? "bg-muted" : ""}
             />
           ))}
       </div>
