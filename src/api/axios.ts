@@ -28,7 +28,7 @@ api.interceptors.request.use((config) => {
 api.interceptors.response.use(
   (config) => config,
   async (error) => {
-    sessionService.remove(STORAGE_KEY);
+    // sessionService.remove(STORAGE_KEY);
     throw error;
   }
 );
