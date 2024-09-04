@@ -6,7 +6,7 @@ export const useMailboxes = () => {
   const user = useUserStore((s) => s.user);
 
   const query = useQuery({
-    queryKey: ["mailboxes", user?.email],
+    queryKey: [user?.email, "mailboxes"],
     queryFn: mailService.mailboxes,
   });
 

@@ -16,12 +16,14 @@ export default function LogoutButton({ asChild, children, variant }: Props) {
   const queryClient = useQueryClient();
   const router = useRouter();
   const pathname = usePathname();
+  const user = useUserStore((s) => s.user);
   const logout = useUserStore((s) => s.logout);
 
   const { mutate } = useMutation({
     mutationFn: async () => sessionService.remove(JWT_KEY),
     onSuccess: async () => {
-      queryClient.invalidateQueries({ queryKey: ["me"] });
+      queryClient.removeQueries({ queryKey: [user?.email] });
+      queryClient.removeQueries({ queryKey: ["me"] });
       router.push(`/auth?from=${pathname}`);
       logout();
     },
