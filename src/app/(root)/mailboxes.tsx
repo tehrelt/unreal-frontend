@@ -11,9 +11,8 @@ import { mailboxIcon } from "@/lib/mbicon";
 import { cn } from "@/lib/utils";
 import { Mailbox } from "@/schemas/mailbox";
 import { ClassValue } from "clsx";
-import { Icon, LucideIcon } from "lucide-react";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import React from "react";
+import { LucideIcon } from "lucide-react";
+import { usePathname, useRouter } from "next/navigation";
 
 export const MailboxLoading = () => {};
 
@@ -28,7 +27,7 @@ export const MailboxEntry = ({
   icon: LucideIcon;
   className?: ClassValue;
 }) => {
-  const router = useRouter();
+  const { set } = useParams();
 
   console.log("clll", className);
 
@@ -40,7 +39,7 @@ export const MailboxEntry = ({
         isCollapsed && "justify-center",
         className
       )}
-      onClick={() => router.push(`/${mailbox.name}`)}
+      onClick={() => set("mailbox", mailbox.name)}
     >
       {isCollapsed ? (
         <TooltipProvider delayDuration={0}>

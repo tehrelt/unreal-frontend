@@ -1,20 +1,22 @@
 "use client";
-import { ModeToggle } from "@/components/widgets/toggle-theme";
-import { Inbox } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { useMailbox } from "@/hooks/mail/use-mailbox";
+import { useParams } from "@/hooks/search-params";
+import { cn } from "@/lib/utils";
 import { NextPage } from "next";
-import { useSearchParams } from "next/navigation";
+import { Mailbox } from "./mailbox";
 
 interface Props {}
 
 const Page: NextPage<Props> = ({}) => {
-  const sp = useSearchParams();
+  const { params } = useParams();
 
-  const mailbox = sp.get("mailbox");
+  const mailbox = params.get("mailbox");
 
   return (
-    <div className="flex flex-col items-center justify-center h-full">
-      <Inbox size={128} />
-      <p className="text-4xl">Выберите почтовый ящик</p>
+    <div className="flex flex-col ">
+      {mailbox && <Mailbox mailbox={mailbox} />}
     </div>
   );
 };

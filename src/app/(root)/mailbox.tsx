@@ -3,22 +3,17 @@ import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useMailbox } from "@/hooks/mail/use-mailbox";
 import { cn } from "@/lib/utils";
-import { NextPage } from "next";
 
 interface Props {
-  params: {
-    mailbox: string;
-  };
+  mailbox: string;
 }
 
-const Page: NextPage<Props> = ({ params: { mailbox } }) => {
+export const Mailbox = ({ mailbox }: Props) => {
   const { data } = useMailbox(mailbox);
-
-  const mb = decodeURIComponent(mailbox);
 
   return (
     <div className="flex flex-col ">
-      <span className="text-5xl font-extrabold m-4 px-4">{mb}</span>
+      <span className="text-5xl font-extrabold m-4 px-4">{mailbox}</span>
       <ScrollArea className="h-[750px] mx-4 overflow-hidden">
         <div className="space-y-2 ">
           {data &&
@@ -54,5 +49,3 @@ const Page: NextPage<Props> = ({ params: { mailbox } }) => {
     </div>
   );
 };
-
-export default Page;
