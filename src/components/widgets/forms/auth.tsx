@@ -24,6 +24,7 @@ import { sessionService } from "@/services/session";
 import { JWT_KEY } from "@/const/jwt";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import { useUserStore } from "@/store/user";
 
 type Props = {
   onSuccess?: (req: LoginDto, res: LoginResponseDto) => void;
@@ -34,6 +35,8 @@ const schema = loginSchema;
 type Schema = LoginDto;
 
 export default function AuthForm({ onSuccess, cred }: Props) {
+  const login = useUserStore((s) => s.login);
+
   const { mutate } = useMutation({
     mutationFn: async (data: Schema) => {
       const res = await authService.login(data);
@@ -41,6 +44,7 @@ export default function AuthForm({ onSuccess, cred }: Props) {
       return res;
     },
     onSuccess: (res, req) => {
+      login({ email: req.email, host: req.host });
       toast.success("Успешная авторизация");
       if (onSuccess) {
         onSuccess(req, res);

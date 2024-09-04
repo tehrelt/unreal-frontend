@@ -5,6 +5,7 @@ import { usePathname, useRouter } from "next/navigation";
 import React from "react";
 import { Button, buttonVariants } from "../ui/button";
 import { VariantProps } from "class-variance-authority";
+import { useUserStore } from "@/store/user";
 
 type Props = {
   asChild?: boolean;
@@ -15,12 +16,14 @@ export default function LogoutButton({ asChild, children, variant }: Props) {
   const queryClient = useQueryClient();
   const router = useRouter();
   const pathname = usePathname();
+  const logout = useUserStore((s) => s.logout);
 
   const { mutate } = useMutation({
     mutationFn: async () => sessionService.remove(JWT_KEY),
     onSuccess: async () => {
       queryClient.invalidateQueries({ queryKey: ["me"] });
       router.push(`/auth?from=${pathname}`);
+      logout();
     },
   });
 
