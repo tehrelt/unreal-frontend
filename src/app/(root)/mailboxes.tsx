@@ -11,7 +11,7 @@ import { mailboxIcon } from "@/lib/mbicon";
 import { cn } from "@/lib/utils";
 import { Mailbox } from "@/schemas/mailbox";
 import { Icon, LucideIcon } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import React from "react";
 
 export const MailboxLoading = () => {};
