@@ -18,7 +18,7 @@ export const Header = ({ className }: Props) => {
       <div></div>
       <div className="flex items-center gap-x-2">
         <div>{user?.email}</div>
-        <LogoutButton variant={"ghost"} asChild>
+        <LogoutButton variant={"ghost"}>
           <LogOut size={16} />
         </LogoutButton>
         <ModeToggle />

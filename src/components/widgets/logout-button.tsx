@@ -24,7 +24,7 @@ export default function LogoutButton({ asChild, children, variant }: Props) {
     },
   });
 
-  const slot = asChild ? children : "Выйти";
+  const slot = children ? children : "Выйти";
 
   return (
     <Button
