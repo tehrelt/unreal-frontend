@@ -1,12 +1,12 @@
 "use client";
-import { LoginDto, loginSchema } from "@/schemas/login";
-import React from "react";
 import {
-  ControllerFieldState,
-  ControllerRenderProps,
-  useForm,
-  UseFormStateReturn,
-} from "react-hook-form";
+  Credential,
+  LoginDto,
+  LoginResponseDto,
+  loginSchema,
+} from "@/schemas/login";
+import React, { useEffect } from "react";
+import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Form,
@@ -26,15 +26,14 @@ import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 
 type Props = {
-  onSuccess?: () => void;
+  onSuccess?: (req: LoginDto, res: LoginResponseDto) => void;
+  cred?: Credential;
 };
 
 const schema = loginSchema;
 type Schema = LoginDto;
 
-export default function AuthForm({ onSuccess }: Props) {
-  const router = useRouter();
-
+export default function AuthForm({ onSuccess, cred }: Props) {
   const { mutate } = useMutation({
     mutationFn: async (data: Schema) => {
       const res = await authService.login(data);
@@ -44,7 +43,7 @@ export default function AuthForm({ onSuccess }: Props) {
     onSuccess: (res, req) => {
       toast.success("Успешная авторизация");
       if (onSuccess) {
-        onSuccess();
+        onSuccess(req, res);
       }
     },
     onError: (err, req) => {
@@ -59,12 +58,26 @@ export default function AuthForm({ onSuccess }: Props) {
   const form = useForm<Schema>({
     resolver: zodResolver(schema),
     defaultValues: {
-      email: "",
+      ...cred,
       password: "",
-      host: "",
-      port: 993,
     },
   });
+
+  useEffect(() => {
+    if (cred) {
+      form.reset({
+        ...cred,
+        password: "",
+      });
+    } else {
+      form.reset({
+        email: "",
+        password: "",
+        host: "",
+        port: 993,
+      });
+    }
+  }, [cred, form]);
 
   return (
     <div>
