@@ -16,7 +16,7 @@ export const mailSchema = z.object({
   id: z.string(),
   from: fromSchema,
   subject: z.string(),
-  sentDate: z.date(),
+  sentDate: z.string(),
   isRead: z.boolean(),
 });
 export type Mail = z.infer<typeof mailSchema>;
