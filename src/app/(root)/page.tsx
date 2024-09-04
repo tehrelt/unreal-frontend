@@ -7,7 +7,11 @@ interface Props {}
 const Page: NextPage<Props> = ({}) => {
   const { user } = useUser();
 
-  return <div></div>;
+  return (
+    <div>
+      <h1>Hello {user?.email}</h1>
+    </div>
+  );
 };
 
 export default Page;
