@@ -12,7 +12,6 @@ import { useCredentials } from "@/store/credentials";
 import { NextPage } from "next";
 import { useRouter, useSearchParams } from "next/navigation";
 import React from "react";
-import { Credential } from "@/schemas/login";
 import { Button } from "@/components/ui/button";
 import { Trash } from "lucide-react";
 
@@ -25,19 +24,17 @@ const Page: NextPage<Props> = ({}) => {
   const from = searchParams.get("from");
 
   const savedCredentials = useCredentials((s) => s.credentials);
-  const saveCredential = useCredentials((s) => s.save);
+  const save = useCredentials((s) => s.save);
   const getCred = useCredentials((s) => s.at);
 
   const [credIndex, setCredIndex] = React.useState<string | undefined>();
-  const clearCred = () => setCredIndex(undefined);
+  const clearCred = () => setCredIndex("");
 
   const onAuth = (req: LoginDto, res: LoginResponseDto) => {
     const url = from ?? "/";
     router.push(url);
-    saveCredential({ email: req.email, host: req.host, port: req.port });
+    save({ email: req.email, host: req.host, port: req.port });
   };
-
-  console.log("cred", credIndex);
 
   return (
     <div className="flex justify-center items-center h-screen">
