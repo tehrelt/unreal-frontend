@@ -2,9 +2,8 @@ import {
   MailboxEntry,
   MailboxEntrySkeleton,
 } from "@/components/widgets/mail/mailbox-item";
-import { useMailboxes } from "@/hooks/mail/useMailboxes";
+import { useMailboxes } from "@/hooks/mail/use-mailboxes";
 import { mailboxIcon } from "@/lib/mbicon";
-import { usePathname, useRouter } from "next/navigation";
 
 export const MailboxLoading = () => {};
 
