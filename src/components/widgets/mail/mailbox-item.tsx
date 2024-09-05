@@ -13,6 +13,7 @@ import { cn } from "@/lib/utils";
 import { Mailbox } from "@/schemas/mailbox";
 import { ClassValue } from "clsx";
 import { LucideIcon } from "lucide-react";
+import { useRouter, useSearchParams } from "next/navigation";
 
 export const MailboxEntry = ({
   mailbox,
@@ -25,11 +26,16 @@ export const MailboxEntry = ({
   icon: LucideIcon;
   className?: ClassValue;
 }) => {
-  const { set, params } = useParams();
+  const router = useRouter();
+  const params = useSearchParams();
+
+  const set = (key: string, value: string) => {
+    const p = new URLSearchParams(params);
+    p.set(key, value);
+    router.push(`/?${p.toString()}`);
+  };
 
   const activeMailbox = params.get("mailbox");
-
-  console.log("clll", className);
 
   return (
     <div

@@ -9,6 +9,10 @@ type Messages = {
   messages: Mail[];
 };
 
+type MailResponse = {
+  mail: Mail;
+};
+
 class MailService {
   async mailboxes() {
     const res = await api.get<Mailboxes>("/mailboxes");
@@ -17,6 +21,13 @@ class MailService {
 
   async mailbox(mailbox: string) {
     const res = await api.get<Messages>(`/${mailbox}`);
+    return res.data;
+  }
+
+  async mail(mailbox: string, num: number) {
+    const res = await api.get<MailResponse>(`/${mailbox}/mail`, {
+      params: { mailnum: num },
+    });
     return res.data;
   }
 }

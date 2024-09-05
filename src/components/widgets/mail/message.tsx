@@ -2,13 +2,23 @@ import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 import { Mail } from "@/schemas/mailbox";
+import { useRouter } from "next/navigation";
 import React from "react";
 
 type Props = {
   mail: Mail;
+  link?: string;
 };
 
-export const MailMessage = ({ mail }: Props) => {
+export const MailMessage = ({ mail, link }: Props) => {
+  const router = useRouter();
+
+  const route = () => {
+    if (link) {
+      router.push(link);
+    }
+  };
+
   return (
     <div
       key={mail.id}
@@ -16,6 +26,7 @@ export const MailMessage = ({ mail }: Props) => {
         "border rounded-md  hover:bg-muted/70 cursor-pointer w-full py-2 px-4",
         !mail.isRead ? "bg-muted/90" : ""
       )}
+      onClick={route}
     >
       <div className="flex justify-between w-full">
         <div className="flex gap-x-2">

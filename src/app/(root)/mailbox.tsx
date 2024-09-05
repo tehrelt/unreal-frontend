@@ -47,7 +47,13 @@ export const Mailbox = ({ mailbox }: Props) => {
             <span>Не удалось загрузить письма</span>
           ) : (
             data &&
-            data.messages.map((m) => <MailMessage key={m.id} mail={m} />)
+            data.messages.map((m) => (
+              <MailMessage
+                key={m.id}
+                mail={m}
+                link={`/mail?mailbox=${mailbox}&num=${m.id}`}
+              />
+            ))
           )}
         </div>
       </ScrollArea>
