@@ -39,7 +39,18 @@ export default function AuthForm({ onSuccess, cred }: Props) {
 
   const { mutate } = useMutation({
     mutationFn: async (data: Schema) => {
-      const res = await authService.login(data);
+      const res = await authService.login({
+        email: data.email,
+        password: data.password,
+        imap: {
+          host: data.host,
+          port: data.port,
+        },
+        smtp: {
+          host: data.host,
+          port: data.port,
+        },
+      });
       sessionService.set(JWT_KEY, res.token);
       return res;
     },

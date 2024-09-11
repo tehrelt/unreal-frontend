@@ -1,6 +1,6 @@
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
-import { cn } from "@/lib/utils";
+import { cn, datef } from "@/lib/utils";
 import { Mail } from "@/schemas/mailbox";
 import { useRouter } from "next/navigation";
 import React from "react";
@@ -36,12 +36,14 @@ export const MailMessage = ({ mail, link }: Props) => {
             {mail.from.address}
           </div>
         </div>
-        <div className="text-muted-foreground">{mail.sentDate}</div>
+        <div className="text-muted-foreground">{datef(mail.sentDate)}</div>
       </div>
       {mail.subject ? (
-        <div className="flex ">{mail.subject.substring(0, 100)}</div>
+        <div className="text-ellipsis overflow-hidden max-w-[960px]">
+          {mail.subject}
+        </div>
       ) : (
-        <span className="text-muted-foreground italic">Тема отсутсвует</span>
+        <span className="text-muted-foreground">(нет темы)</span>
       )}
     </div>
   );

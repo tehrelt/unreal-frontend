@@ -10,11 +10,7 @@ const Page: NextPage<Props> = ({}) => {
 
   const mailbox = params.get("mailbox");
 
-  return (
-    <div className="flex flex-col ">
-      {mailbox && <Mailbox mailbox={mailbox} />}
-    </div>
-  );
+  return <div className="">{mailbox && <Mailbox mailbox={mailbox} />}</div>;
 };
 
 export default Page;

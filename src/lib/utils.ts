@@ -10,3 +10,6 @@ export function datef(date: Date, format?: string): string {
   return dayjs(date).format(format ?? "DD/MM/YYYY HH:mm:ss");
 }
 
+export const decodeb64 = (str: string): string =>
+  Buffer.from(str, "base64").toString("binary");
+

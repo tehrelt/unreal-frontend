@@ -27,9 +27,8 @@ export const Mailbox = ({ mailbox }: Props) => {
   };
 
   return (
-    <div className="flex flex-col">
-      <div className="flex items-center gap-x-2">
-        <span className="text-5xl font-extrabold m-4 px-4">{mailbox}</span>
+    <div className="mx-4 space-y-2">
+      <div className="flex items-center gap-x-2 mt-2">
         <Button
           variant={"ghost"}
           className="py-8 px-4"
@@ -38,9 +37,10 @@ export const Mailbox = ({ mailbox }: Props) => {
         >
           <RefreshCcw size={32} />
         </Button>
+        <span className="text-5xl font-extrabold">{mailbox}</span>
       </div>
-      <ScrollArea className="h-[750px] mx-4 overflow-hidden">
-        <div className="space-y-2">
+      <ScrollArea className="h-[750px] overflow-hidden">
+        <div className="space-y-2 flex flex-col">
           {isLoading ? (
             [...Array(3)].map((m, i) => <MailMessageSkeleton key={i} />)
           ) : isError ? (

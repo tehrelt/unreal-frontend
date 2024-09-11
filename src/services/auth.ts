@@ -1,9 +1,9 @@
 import { api } from "@/api/axios";
-import { LoginDto, LoginResponseDto } from "@/schemas/login";
+import { Login, LoginDto, LoginResponseDto } from "@/schemas/login";
 import { User } from "@/schemas/user";
 
 class AuthService {
-  async login(dto: LoginDto) {
+  async login(dto: Login) {
     const res = await api.post<LoginResponseDto>("/login", dto);
     return res.data;
   }
