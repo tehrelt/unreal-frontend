@@ -15,7 +15,10 @@ export default function Layout({ children }: React.PropsWithChildren) {
   return (
     <div className="flex flex-col h-screen">
       <Header className={"flex-1"} />
-      <ResizablePanelGroup direction="horizontal" className="flex-2 border">
+      <ResizablePanelGroup
+        direction="horizontal"
+        className="flex-2 border flex-shrink-0"
+      >
         <ResizablePanel
           defaultSize={15}
           collapsedSize={3}

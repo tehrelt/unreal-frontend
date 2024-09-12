@@ -21,7 +21,7 @@ export function Mail({ mailbox, num }: Props) {
   }
 
   return (
-    <div className="py-4 px-4 w-full">
+    <div className="py-4 px-4 w-full ">
       {data && (
         <div>
           <div className="flex justify-between">
@@ -75,16 +75,21 @@ export function Mail({ mailbox, num }: Props) {
               {datef(data.mail.sentDate)}
             </div>
           </div>
-          <ScrollArea className="h-[750px] w-[1600px] scroll-m-0 break-words text-wrap">
-            {data.mail.content ? (
-              data.mail.content.map((part) =>
-                renderContentType(part.contentType, part.body)
-              )
-            ) : (
-              <div className="text-center text-muted-foreground">
-                (Без содержимого)
-              </div>
-            )}
+          <ScrollArea className="break-words text-wrap flex-shrink-0 h-screen">
+            <div className="relative text-wrap break-words">
+              {data.mail.body ? (
+                <div
+                  className="w-full text-wrap"
+                  dangerouslySetInnerHTML={{
+                    __html: data.mail.body,
+                  }}
+                />
+              ) : (
+                <div className="text-center text-muted-foreground">
+                  (Без содержимого)
+                </div>
+              )}
+            </div>
           </ScrollArea>
         </div>
       )}

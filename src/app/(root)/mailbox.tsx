@@ -1,5 +1,4 @@
 "use client";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import {
@@ -7,10 +6,7 @@ import {
   MailMessageSkeleton,
 } from "@/components/widgets/mail/message";
 import { useMailbox } from "@/hooks/mail/use-mailbox";
-import { cn } from "@/lib/utils";
-import { useQueryClient } from "@tanstack/react-query";
 import { RefreshCcw } from "lucide-react";
-import { Suspense } from "react";
 import { toast } from "sonner";
 
 interface Props {
@@ -39,7 +35,7 @@ export const Mailbox = ({ mailbox }: Props) => {
         </Button>
         <span className="text-5xl font-extrabold">{mailbox}</span>
       </div>
-      <ScrollArea className="h-[750px] overflow-hidden">
+      <ScrollArea className="h-screen overflow-hidden">
         <div className="space-y-2 flex flex-col">
           {isLoading ? (
             [...Array(3)].map((m, i) => <MailMessageSkeleton key={i} />)

@@ -9,6 +9,7 @@ const STORAGE_KEY = JWT_KEY;
 const api = axios.create({
   baseURL: `${host}`,
   headers: { "Content-Type": "application/json" },
+  withCredentials: true,
 });
 
 api.interceptors.request.use((config) => {
