@@ -12,7 +12,7 @@ type Props = {
 const Attachment = ({ attachment, link }: Props) => {
   return (
     <div className="relative w-48 h-24 border rounded-md flex items-end">
-      <p className="bottom-0 left-5 truncate py-2 px-1">
+      <p className="bottom-0 left-5 truncate py-2 px-1 text-muted-foreground text-xs">
         {attachment.filename}
       </p>
       <a href={link} target="_blank">
