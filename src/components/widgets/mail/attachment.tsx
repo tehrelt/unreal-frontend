@@ -11,19 +11,25 @@ type Props = {
 
 const Attachment = ({ attachment, link }: Props) => {
   return (
-    <div className="relative w-48 h-24 border rounded-md flex items-end">
-      <p className="bottom-0 left-5 truncate py-2 px-1 text-muted-foreground text-xs">
+    <a
+      href={link}
+      target="_blank"
+      className="relative w-48 h-24 border rounded-md flex items-end group overflow-hidden cursor-pointer"
+    >
+      <div className="absolute w-full h-full bg-primary -z-20">
+        {attachment.contentType.includes("image/") && (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={link}
+            alt={attachment.filename}
+            className="w-full h-full -z-10 opacity-70 rounded-md"
+          />
+        )}
+      </div>
+      <p className="bottom-0 left-5 truncate py-2 px-1 text-muted text-xs w-full group-hover:bg-muted-foreground/60 rounded-t-md ">
         {attachment.filename}
       </p>
-      <a href={link} target="_blank">
-        <Button
-          className="absolute top-0 right-4 my-2 px-2 py-0"
-          variant={"ghost"}
-        >
-          <Download size={16} />
-        </Button>
-      </a>
-    </div>
+    </a>
   );
 };
 

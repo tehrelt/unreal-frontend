@@ -37,9 +37,9 @@ export function Mail({ mailbox, num }: Props) {
   }
 
   return (
-    <div className="py-4 px-4 w-full h-screen ">
+    <div className="py-4 px-4 w-full h-screen space-y-2">
       {data && (
-        <div>
+        <div className="space-y-4">
           <div className="flex justify-between">
             <div>
               <div className="flex items-center gap-x-2 group">
@@ -86,25 +86,31 @@ export function Mail({ mailbox, num }: Props) {
                   </>
                 ))}
               </div>
-              {data.mail.attachments && data.mail.attachments.length > 0 && (
-                <div>
-                  <p className="text-muted-foreground">Прикрепленные файлы</p>
-                  <div className="flex gap-x-2">
-                    {data.mail.attachments.map((a) => (
-                      <Attachment
-                        key={a.filename}
-                        attachment={a}
-                        link={`${API_HOST}/attachment/${a.filename}?mailnum=${num}&mailbox=${mailbox}`}
-                      />
-                    ))}
-                  </div>
-                </div>
-              )}
             </div>
             <div className="text-muted-foreground">
               {datef(data.mail.sentDate)}
             </div>
           </div>
+          <hr />
+          <div>
+            {data.mail.attachments && data.mail.attachments.length > 0 && (
+              <div>
+                <p className="text-muted-foreground text-lg font-bold">
+                  Прикрепленные файлы
+                </p>
+                <div className="flex gap-x-2">
+                  {data.mail.attachments.map((a) => (
+                    <Attachment
+                      key={a.filename}
+                      attachment={a}
+                      link={`${API_HOST}/attachment/${a.filename}?mailnum=${num}&mailbox=${mailbox}`}
+                    />
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+          <hr />
           <ScrollArea className="break-words text-wrap flex-shrink-0 h-screen">
             <div className="relative text-wrap break-words">
               {data.mail.body ? (
