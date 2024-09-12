@@ -12,12 +12,13 @@ export const addressSchema = z.object({
   address: z.string(),
 });
 
-export const bodySchema = z.object({
+export const attachmentSchema = z.object({
   contentType: z.string(),
-  body: z.string(),
+  filename: z.string(),
+  contentId: z.string(),
 });
 
-export type BodyInfo = z.infer<typeof bodySchema>;
+export type AttachmentInfo = z.infer<typeof attachmentSchema>;
 
 export const mailSchema = z.object({
   id: z.string(),
@@ -27,5 +28,6 @@ export const mailSchema = z.object({
   sentDate: z.date(),
   isRead: z.boolean(),
   body: z.string(),
+  attachments: z.array(attachmentSchema),
 });
 export type Mail = z.infer<typeof mailSchema>;

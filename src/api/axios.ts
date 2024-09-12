@@ -1,13 +1,12 @@
+import { API_HOST } from "@/const/env";
 import { JWT_KEY } from "@/const/jwt";
 import { sessionService } from "@/services/session";
 import axios from "axios";
 
-const host = process.env.NEXT_PUBLIC_API_URL;
-
 const STORAGE_KEY = JWT_KEY;
 
 const api = axios.create({
-  baseURL: `${host}`,
+  baseURL: API_HOST,
   headers: { "Content-Type": "application/json" },
   withCredentials: true,
 });
