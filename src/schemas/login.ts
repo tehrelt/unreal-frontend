@@ -1,10 +1,15 @@
 import { z } from "zod";
 
+export const connectionSchema = z.object({
+  host: z.string(),
+  port: z.number(),
+});
+
 export const loginSchema = z.object({
   email: z.string().email(),
   password: z.string(),
-  host: z.string(),
-  port: z.number(),
+  imap: connectionSchema,
+  smtp: connectionSchema,
 });
 
 export const credentialsSchema = loginSchema.omit({ password: true });

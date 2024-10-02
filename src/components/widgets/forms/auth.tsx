@@ -25,6 +25,10 @@ import { JWT_KEY } from "@/const/jwt";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { useUserStore } from "@/store/user";
+import { z } from "zod";
+import { vemail } from "@/lib/utils";
+import { Email } from "@/lib/email";
+import { isKnownEmail, KnownEmail } from "@/const/known-emails";
 
 type Props = {
   onSuccess?: (req: LoginDto, res: LoginResponseDto) => void;
@@ -37,25 +41,27 @@ type Schema = LoginDto;
 export default function AuthForm({ onSuccess, cred }: Props) {
   const login = useUserStore((s) => s.login);
 
+  const [knownMail, setKnownMail] = React.useState<KnownEmail | undefined>();
+
   const { mutate } = useMutation({
     mutationFn: async (data: Schema) => {
       const res = await authService.login({
         email: data.email,
         password: data.password,
         imap: {
-          host: data.host,
-          port: data.port,
+          host: data.imap.host,
+          port: data.imap.port,
         },
         smtp: {
-          host: data.host,
-          port: data.port,
+          host: data.smtp.host,
+          port: data.smtp.port,
         },
       });
       sessionService.set(JWT_KEY, res.token);
       return res;
     },
     onSuccess: (res, req) => {
-      login({ email: req.email, host: req.host });
+      login({ email: req.email, host: req.imap.host });
       toast.success("Успешная авторизация");
       if (onSuccess) {
         onSuccess(req, res);
@@ -78,6 +84,35 @@ export default function AuthForm({ onSuccess, cred }: Props) {
     },
   });
 
+  const emailwatch = form.watch("email");
+
+  useEffect(() => {
+    if (emailwatch) {
+      if (vemail(emailwatch)) {
+        const known = isKnownEmail(emailwatch);
+
+        console.log(emailwatch, known);
+
+        setKnownMail(known);
+
+        if (known) {
+          form.setValue("imap.host", known.imap.host);
+          form.setValue("imap.port", known.imap.port);
+
+          form.setValue("smtp.host", known.smtp.host);
+          form.setValue("smtp.port", known.smtp.port);
+        } else {
+          form.resetField("imap.host");
+          form.resetField("imap.port");
+          form.resetField("smtp.host");
+          form.resetField("smtp.port");
+        }
+      } else {
+        setKnownMail(undefined);
+      }
+    }
+  }, [emailwatch]);
+
   useEffect(() => {
     if (cred) {
       form.reset({
@@ -85,18 +120,13 @@ export default function AuthForm({ onSuccess, cred }: Props) {
         password: "",
       });
     } else {
-      form.reset({
-        email: "",
-        password: "",
-        host: "",
-        port: 993,
-      });
+      form.reset({});
     }
   }, [cred, form]);
 
   return (
     <div>
-      <div className="border px-12 py-4 rounded-md space-y-2">
+      <div className="py-4 px-12 space-y-2 rounded-md border">
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit, console.error)}>
             <div className="space-y-2">
@@ -108,7 +138,14 @@ export default function AuthForm({ onSuccess, cred }: Props) {
                     <FormItem>
                       <FormLabel>Email</FormLabel>
                       <FormControl>
-                        <Input placeholder="email" {...field} />
+                        <div className="flex gap-x-2">
+                          <Input placeholder="email" {...field} />
+                          {knownMail ? (
+                            <img src={knownMail.image} />
+                          ) : (
+                            <div className="w-[32px] h-[32px]" />
+                          )}
+                        </div>
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -131,32 +168,90 @@ export default function AuthForm({ onSuccess, cred }: Props) {
                     </FormItem>
                   )}
                 />
-                <FormField
-                  control={form.control}
-                  name="host"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Host</FormLabel>
-                      <FormControl>
-                        <Input placeholder="host" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="port"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Port</FormLabel>
-                      <FormControl>
-                        <Input placeholder="port" type="number" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                {!knownMail && (
+                  <>
+                    <div className="flex gap-x-2 items-center">
+                      <div className="h-1 bg-gray-200 rounded-sm flex-1" />
+                      <span className="flex-2">imap</span>
+                      <div className="h-1 bg-gray-200 rounded-sm flex-1" />
+                    </div>
+                    <div className="grid grid-cols-[1fr_.5fr] gap-x-4">
+                      <FormField
+                        control={form.control}
+                        name="imap.host"
+                        render={({ field }) => (
+                          <FormItem className="flex-1">
+                            <FormControl>
+                              <Input
+                                placeholder="host"
+                                disabled={!!knownMail}
+                                {...field}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={form.control}
+                        name="imap.port"
+                        render={({ field }) => (
+                          <FormItem className="flex-2">
+                            <FormControl>
+                              <Input
+                                placeholder="port"
+                                type="number"
+                                disabled={!!knownMail}
+                                {...field}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+                    <div className="flex gap-x-2 items-center">
+                      <div className="h-1 bg-gray-200 rounded-sm flex-1" />
+                      <span className="flex-2">smtp</span>
+                      <div className="h-1 bg-gray-200 rounded-sm flex-1" />
+                    </div>
+                    <div className="grid grid-cols-[1fr_.5fr] gap-x-4">
+                      <FormField
+                        control={form.control}
+                        name="smtp.host"
+                        render={({ field }) => (
+                          <FormItem className="flex-1">
+                            <FormControl>
+                              <Input
+                                placeholder="host"
+                                disabled={!!knownMail}
+                                {...field}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={form.control}
+                        name="smtp.port"
+                        render={({ field }) => (
+                          <FormItem className="flex-2">
+                            <FormControl>
+                              <Input
+                                placeholder="port"
+                                type="number"
+                                disabled={!!knownMail}
+                                {...field}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+                  </>
+                )}
               </div>
               <div className="flex justify-end">
                 <Button type="submit">auth</Button>

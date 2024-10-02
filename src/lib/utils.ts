@@ -13,3 +13,8 @@ export function datef(date: Date, format?: string): string {
 export const decodeb64 = (str: string): string =>
   Buffer.from(str, "base64").toString("binary");
 
+export const vemail = (email: string) => {
+  return email.match(
+    /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+  );
+}
