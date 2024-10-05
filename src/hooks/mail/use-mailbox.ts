@@ -8,6 +8,7 @@ export const useMailbox = (mailbox: string) => {
   const q = useQuery({
     queryKey: [user?.email, "mailbox", mailbox],
     queryFn: async () => await mailService.mailbox(mailbox),
+    refetchOnWindowFocus: false,
   });
 
   return q;

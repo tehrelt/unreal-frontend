@@ -8,7 +8,6 @@ import {
 import { Header } from "@/components/widgets/header";
 import React from "react";
 import { Mailboxes } from "./mailboxes";
-import Footer from "@/components/widgets/footer";
 
 export default function Layout({ children }: React.PropsWithChildren) {
   const [isCollapsed, setIsCollapsed] = React.useState(false);
@@ -29,7 +28,9 @@ export default function Layout({ children }: React.PropsWithChildren) {
           <Mailboxes isCollapsed={isCollapsed} />
         </ResizablePanel>
         <ResizableHandle withHandle />
-        <ResizablePanel>{children}</ResizablePanel>
+        <ResizablePanel className="flex-grow h-full overflow-auto">
+          {children}
+        </ResizablePanel>
       </ResizablePanelGroup>
     </div>
   );

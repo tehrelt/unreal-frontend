@@ -10,7 +10,7 @@ const Page: NextPage<Props> = ({}) => {
 
   const mailbox = params.get("mailbox");
 
-  return <div className="">{mailbox && <Mailbox mailbox={mailbox} />}</div>;
+  return mailbox && <Mailbox mailbox={mailbox} />;
 };
 
 export default Page;
