@@ -1,7 +1,9 @@
 import { cn } from "@/lib/utils";
 import { AttachmentInfo } from "@/schemas/mailbox";
-import { File, FileQuestion } from "lucide-react";
+import { File, FileImage, FileQuestion } from "lucide-react";
 import React from "react";
+import Image from "next/image";
+import { Skeleton } from "@/components/ui/skeleton";
 
 type Props = {
   attachment: AttachmentInfo;
@@ -17,12 +19,17 @@ const Attachment = ({ attachment, link }: Props) => {
     >
       <div className="absolute w-full bg-primary-foreground -z-20 h-full">
         {attachment.contentType.includes("image/") ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
-            src={link}
-            alt={attachment.filename}
-            className="w-full h-full group-hover:opacity-60  rounded-md transition-all duration-300"
-          />
+          <div className="relative h-full w-full">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={link}
+              alt={""}
+              className="absolute w-full h-full group-hover:opacity-60 rounded-md transition-all duration-300"
+            />
+            <Skeleton className="absolute h-full w-full -z-10" />
+            {/* <FileImage className="absolute top-1/2 right-1/2 translate-x-1/2 -translate-y-1/2 -z-10 w-10 h-10" /> */}
+            {/*  */}
+          </div>
         ) : (
           <div className="flex justify-center items-center h-full">
             <FileQuestion className="w-10 h-10" />
