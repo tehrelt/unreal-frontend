@@ -21,7 +21,7 @@ export const useCredentials = create<CredentialsStore>()(
       save: (credential) =>
         set((state) => {
           const cred = state.credentials.find(
-            (c) => c.email == credential.email && c.host == credential.host
+            (c) => c.email == credential.email
           );
 
           if (cred) {

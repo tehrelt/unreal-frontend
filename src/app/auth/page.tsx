@@ -33,7 +33,7 @@ const Page: NextPage<Props> = ({}) => {
   const onAuth = (req: LoginDto, res: LoginResponseDto) => {
     const url = from ?? "/";
     router.push(url);
-    save({ email: req.email, host: req.host, port: req.port });
+    save({ email: req.email });
   };
 
   return (
@@ -48,15 +48,10 @@ const Page: NextPage<Props> = ({}) => {
                 </SelectTrigger>
                 <SelectContent>
                   {savedCredentials.map((cred, i) => (
-                    <SelectItem
-                      key={cred.email + cred.host}
-                      value={i.toString()}
-                    >
+                    <SelectItem key={cred.email} value={i.toString()}>
                       <div className="flex flex-col">
                         <span className="">{cred.email}</span>
-                        <span className="text-sm text-muted-foreground">
-                          {cred.host}
-                        </span>
+                        {/* <span className="text-sm text-muted-foreground"></span> */}
                       </div>
                     </SelectItem>
                   ))}

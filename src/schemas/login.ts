@@ -12,7 +12,11 @@ export const loginSchema = z.object({
   smtp: connectionSchema,
 });
 
-export const credentialsSchema = loginSchema.omit({ password: true });
+export const credentialsSchema = loginSchema.omit({
+  password: true,
+  imap: true,
+  smtp: true,
+});
 
 export const loginResponeSchema = z.object({
   token: z.string(),

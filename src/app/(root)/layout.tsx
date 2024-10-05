@@ -14,7 +14,7 @@ export default function Layout({ children }: React.PropsWithChildren) {
 
   return (
     <div className="flex flex-col h-screen relative">
-      <Header className={"flex-1 "} />
+      <Header className={"flex-1 border-b border-b-primary-foreground"} />
       <ResizablePanelGroup direction="horizontal" className="flex-2">
         <ResizablePanel
           defaultSize={15}

@@ -7,10 +7,8 @@ interface Props {}
 
 const Page: NextPage<Props> = ({}) => {
   const { params } = useParams();
-
-  const mailbox = params.get("mailbox");
-
-  return mailbox && <Mailbox mailbox={mailbox} />;
+  const mailbox = params.get("mailbox") || "INBOX";
+  return <Mailbox mailbox={mailbox} />;
 };
 
 export default Page;

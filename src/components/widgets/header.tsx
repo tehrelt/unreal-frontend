@@ -7,6 +7,8 @@ import { useUser } from "@/hooks/useUser";
 import LogoutButton from "./logout-button";
 import { LogOut } from "lucide-react";
 import { useSearchParams } from "next/navigation";
+import { Badge } from "../ui/badge";
+import Link from "next/link";
 
 type Props = { className?: ClassValue };
 
@@ -20,7 +22,13 @@ export const Header = ({ className }: Props) => {
         className
       )}
     >
-      <div></div>
+      <div className="">
+        <Link href={"/"}>
+          <Badge className="" variant={"secondary"}>
+            <span className="text-xl">unreal</span>
+          </Badge>
+        </Link>
+      </div>
       <div></div>
       <div className="flex items-center gap-x-2 justify-end">
         <div>{user?.email}</div>

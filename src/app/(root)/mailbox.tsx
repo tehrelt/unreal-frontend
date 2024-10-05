@@ -1,6 +1,8 @@
 "use client";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   MailMessage,
   MailMessageSkeleton,
@@ -23,7 +25,7 @@ export const Mailbox = ({ mailbox }: Props) => {
   };
 
   return (
-    <div className="mx-4 space-y-2 flex flex-col max-h-[calc(100vh-52px)] pb-6">
+    <div className="pt-2 mx-4 space-y-2 flex flex-col max-h-[calc(100vh-52px)] pb-6">
       <div className="flex items-center gap-x-2">
         <Button
           variant={"ghost"}
@@ -33,12 +35,21 @@ export const Mailbox = ({ mailbox }: Props) => {
         >
           <RefreshCcw size={32} />
         </Button>
-        <span className="text-5xl font-extrabold">{mailbox}</span>
+        <Badge className="rounded-lg px-4 py-2" variant={"secondary"}>
+          <div className="flex gap-x-2 items-center w-full h-full">
+            <span className="text-5xl font-extrabold">{mailbox}</span>
+            {isLoading || isRefetching ? (
+              <Skeleton className="h-6 w-6 rounded-full bg-primary-foreground" />
+            ) : (
+              <span className="text-2xl">14</span>
+            )}
+          </div>
+        </Badge>
       </div>
 
       <ScrollArea className="flex flex-col">
         <div className="space-y-2">
-          {isLoading ? (
+          {isLoading || isRefetching ? (
             [...Array(7)].map((m, i) => <MailMessageSkeleton key={i} />)
           ) : isError ? (
             <span>Не удалось загрузить письма</span>
