@@ -1,13 +1,12 @@
 "use client";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { API_HOST } from "@/const/env";
 import { useMail } from "@/hooks/mail/use-mail";
 import { useTitle } from "@/hooks/use-title";
 import { useUser } from "@/hooks/useUser";
-import React, { useEffect } from "react";
-import Attachment from "./attachments/attachment";
-import { MailHeader } from "./header";
+import { useEffect } from "react";
 import { AttachmentsList } from "./attachments/attachments-list";
+import { MailHeader } from "./header";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 type Props = {
   mailbox: string;
@@ -34,27 +33,26 @@ export function Mail({ mailbox, num }: Props) {
   }
 
   return (
-    <div className="py-4 px-4 w-full h-screen space-y-2">
-      {data && (
-        <div className="space-y-4">
-          <MailHeader mailbox={mailbox} mail={data.mail} />
-          {data.mail.attachments && data.mail.attachments.length > 0 && (
-            <>
-              <hr />
-              <AttachmentsList
-                attachments={data.mail.attachments}
-                link={(filename) =>
-                  `${API_HOST}/attachment/${filename}?mailnum=${num}&mailbox=${mailbox}`
-                }
-              />
-            </>
-          )}
-          <hr />
-          <ScrollArea className="break-words text-wrap">
-            <div className="relative text-wrap break-words">
+    <div className="px-4 flex flex-col space-y-2 max-h-[calc(100vh-64px)]">
+      <ScrollArea className="flex flex-col">
+        {data && (
+          <div className="space-y-4">
+            <MailHeader mailbox={mailbox} mail={data.mail} />
+            {data.mail.attachments && data.mail.attachments.length > 0 && (
+              <>
+                <hr />
+                <AttachmentsList
+                  attachments={data.mail.attachments}
+                  link={(filename) =>
+                    `${API_HOST}/attachment/${filename}?mailnum=${num}&mailbox=${mailbox}`
+                  }
+                />
+              </>
+            )}
+            <hr />
+            <div className="relative ">
               {data.mail.body ? (
                 <div
-                  className=""
                   dangerouslySetInnerHTML={{
                     __html: data.mail.body,
                   }}
@@ -65,10 +63,9 @@ export function Mail({ mailbox, num }: Props) {
                 </div>
               )}
             </div>
-            <div className="h-[200px]"></div>
-          </ScrollArea>
-        </div>
-      )}
+          </div>
+        )}
+      </ScrollArea>
     </div>
   );
 }
