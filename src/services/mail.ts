@@ -7,6 +7,7 @@ type Mailboxes = {
 
 type Messages = {
   messages: Mail[];
+  total: number;
 };
 
 type MailResponse = {

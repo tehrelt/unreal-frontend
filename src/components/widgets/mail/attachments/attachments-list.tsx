@@ -9,12 +9,12 @@ type Props = {
 
 export function AttachmentsList({ attachments, link }: Props) {
   return (
-    <div>
+    <div className="">
       <p className="text-muted-foreground text-lg font-bold">
         Прикрепленные файлы
       </p>
 
-      <div className="flex gap-x-2">
+      <div className="flex gap-x-2 flex-shrink flex-grow">
         {attachments.map((a) => (
           <Attachment key={a.filename} attachment={a} link={link(a.filename)} />
         ))}

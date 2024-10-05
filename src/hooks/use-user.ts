@@ -11,12 +11,12 @@ export const useUser = () => {
     queryFn: async () => authService.me(),
   });
 
-  // if (q.isError) {
-  //   router.replace(`/auth?from=${pathname}`);
-  //   toast.error(q.error.name, {
-  //     description: q.error.message,
-  //   });
-  // }
+  if (q.isError) {
+    router.replace(`/auth?from=${pathname}`);
+    toast.error(q.error.name, {
+      description: q.error.message,
+    });
+  }
 
   return { ...q, user: q.data };
 };

@@ -3,7 +3,7 @@ import { cn } from "@/lib/utils";
 import { ClassValue } from "clsx";
 import React from "react";
 import { ModeToggle } from "./toggle-theme";
-import { useUser } from "@/hooks/useUser";
+import { useUser } from "@/hooks/use-user";
 import LogoutButton from "./logout-button";
 import { LogOut } from "lucide-react";
 import { useSearchParams } from "next/navigation";

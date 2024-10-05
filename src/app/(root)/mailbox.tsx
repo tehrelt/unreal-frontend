@@ -41,7 +41,7 @@ export const Mailbox = ({ mailbox }: Props) => {
             {isLoading || isRefetching ? (
               <Skeleton className="h-6 w-6 rounded-full bg-primary-foreground" />
             ) : (
-              <span className="text-2xl">14</span>
+              data && <span className="text-2xl">{data.total}</span>
             )}
           </div>
         </Badge>

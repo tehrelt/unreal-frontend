@@ -2,7 +2,7 @@
 import { API_HOST } from "@/const/env";
 import { useMail } from "@/hooks/mail/use-mail";
 import { useTitle } from "@/hooks/use-title";
-import { useUser } from "@/hooks/useUser";
+import { useUser } from "@/hooks/use-user";
 import { useEffect } from "react";
 import { AttachmentsList } from "./attachments/attachments-list";
 import { MailHeader } from "./header";
