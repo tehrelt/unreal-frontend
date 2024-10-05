@@ -5,8 +5,9 @@ import { useMail } from "@/hooks/mail/use-mail";
 import { useTitle } from "@/hooks/use-title";
 import { useUser } from "@/hooks/useUser";
 import React, { useEffect } from "react";
-import Attachment from "./attachment";
+import Attachment from "./attachments/attachment";
 import { MailHeader } from "./header";
+import { AttachmentsList } from "./attachments/attachments-list";
 
 type Props = {
   mailbox: string;
@@ -37,25 +38,17 @@ export function Mail({ mailbox, num }: Props) {
       {data && (
         <div className="space-y-4">
           <MailHeader mailbox={mailbox} mail={data.mail} />
-          <hr />
-          <div>
-            {data.mail.attachments && data.mail.attachments.length > 0 && (
-              <div>
-                <p className="text-muted-foreground text-lg font-bold">
-                  Прикрепленные файлы
-                </p>
-                <div className="flex gap-x-2">
-                  {data.mail.attachments.map((a) => (
-                    <Attachment
-                      key={a.filename}
-                      attachment={a}
-                      link={`${API_HOST}/attachment/${a.filename}?mailnum=${num}&mailbox=${mailbox}`}
-                    />
-                  ))}
-                </div>
-              </div>
-            )}
-          </div>
+          {data.mail.attachments && data.mail.attachments.length > 0 && (
+            <>
+              <hr />
+              <AttachmentsList
+                attachments={data.mail.attachments}
+                link={(filename) =>
+                  `${API_HOST}/attachment/${filename}?mailnum=${num}&mailbox=${mailbox}`
+                }
+              />
+            </>
+          )}
           <hr />
           <ScrollArea className="break-words text-wrap">
             <div className="relative text-wrap break-words">
