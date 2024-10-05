@@ -23,8 +23,8 @@ export const Mailbox = ({ mailbox }: Props) => {
   };
 
   return (
-    <div className="mx-4 space-y-2 flex flex-col max-h-[calc(100vh-52px)]">
-      <div className="flex items-center gap-x-2 mt-2">
+    <div className="mx-4 space-y-2 flex flex-col max-h-[calc(100vh-52px)] pb-6">
+      <div className="flex items-center gap-x-2">
         <Button
           variant={"ghost"}
           className="py-8 px-4"
@@ -36,22 +36,24 @@ export const Mailbox = ({ mailbox }: Props) => {
         <span className="text-5xl font-extrabold">{mailbox}</span>
       </div>
 
-      <div className="space-y-2 flex flex-col overflow-y-auto">
-        {isLoading ? (
-          [...Array(7)].map((m, i) => <MailMessageSkeleton key={i} />)
-        ) : isError ? (
-          <span>Не удалось загрузить письма</span>
-        ) : (
-          data &&
-          data.messages.map((m) => (
-            <MailMessage
-              key={m.id}
-              mail={m}
-              link={`/mail?mailbox=${mailbox}&num=${m.id}`}
-            />
-          ))
-        )}
-      </div>
+      <ScrollArea className="flex flex-col">
+        <div className="space-y-2">
+          {isLoading ? (
+            [...Array(7)].map((m, i) => <MailMessageSkeleton key={i} />)
+          ) : isError ? (
+            <span>Не удалось загрузить письма</span>
+          ) : (
+            data &&
+            data.messages.map((m) => (
+              <MailMessage
+                key={m.id}
+                mail={m}
+                link={`/mail?mailbox=${mailbox}&num=${m.id}`}
+              />
+            ))
+          )}
+        </div>
+      </ScrollArea>
     </div>
   );
 };

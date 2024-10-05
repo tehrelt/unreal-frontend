@@ -12,6 +12,8 @@ export const addressSchema = z.object({
   address: z.string(),
 });
 
+export type AddressInfo = z.infer<typeof addressSchema>;
+
 export const attachmentSchema = z.object({
   contentType: z.string(),
   filename: z.string(),

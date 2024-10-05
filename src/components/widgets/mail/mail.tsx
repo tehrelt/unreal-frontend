@@ -1,16 +1,12 @@
 "use client";
-import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { API_HOST } from "@/const/env";
 import { useMail } from "@/hooks/mail/use-mail";
 import { useTitle } from "@/hooks/use-title";
 import { useUser } from "@/hooks/useUser";
-import { renderContentType } from "@/lib/parser";
-import { cn, datef } from "@/lib/utils";
-import { ChevronLeftIcon } from "lucide-react";
-import Link from "next/link";
 import React, { useEffect } from "react";
 import Attachment from "./attachment";
+import { MailHeader } from "./header";
 
 type Props = {
   mailbox: string;
@@ -40,57 +36,7 @@ export function Mail({ mailbox, num }: Props) {
     <div className="py-4 px-4 w-full h-screen space-y-2">
       {data && (
         <div className="space-y-4">
-          <div className="flex justify-between">
-            <div>
-              <div className="flex items-center gap-x-2 group">
-                <Link passHref legacyBehavior href={`/?mailbox=${mailbox}`}>
-                  <Button
-                    variant={"link"}
-                    className="text-muted-foreground group-hover:text-primary"
-                  >
-                    <ChevronLeftIcon size={20} />
-                  </Button>
-                </Link>
-                <div
-                  className={cn(
-                    "inline text-xl font-extrabold max-w-[1280px] line-clamp-2 text-ellipsis break-words",
-                    !data.mail.subject && "text-muted-foreground"
-                  )}
-                >
-                  {data.mail.subject ? data.mail.subject : "(нет темы)"}
-                </div>
-              </div>
-              <div className="flex gap-x-2 items-center">
-                <span className="text-muted-foreground">Отправитель:</span>
-                <span>{data.mail.from.name}</span>
-                <span className="text-xs text-muted-foreground  cursor-pointer hover:text-muted-foreground/80 hover:underline">
-                  {data.mail.from.address}
-                </span>
-              </div>
-              <div className="flex gap-x-2 items-center">
-                <span className="text-muted-foreground">Получатель:</span>
-                {data.mail.to.map((to) => (
-                  <>
-                    <span>
-                      {to.name ? (
-                        to.name
-                      ) : (
-                        <span className="text-muted-foreground">
-                          (нет имени)
-                        </span>
-                      )}
-                    </span>
-                    <span className="text-xs text-muted-foreground  cursor-pointer hover:text-muted-foreground/80 hover:underline">
-                      {to.address}
-                    </span>
-                  </>
-                ))}
-              </div>
-            </div>
-            <div className="text-muted-foreground">
-              {datef(data.mail.sentDate)}
-            </div>
-          </div>
+          <MailHeader mailbox={mailbox} mail={data.mail} />
           <hr />
           <div>
             {data.mail.attachments && data.mail.attachments.length > 0 && (
@@ -111,11 +57,11 @@ export function Mail({ mailbox, num }: Props) {
             )}
           </div>
           <hr />
-          <ScrollArea className="break-words text-wrap flex-shrink-0 h-screen">
+          <ScrollArea className="break-words text-wrap">
             <div className="relative text-wrap break-words">
               {data.mail.body ? (
                 <div
-                  className="w-full text-wrap"
+                  className=""
                   dangerouslySetInnerHTML={{
                     __html: data.mail.body,
                   }}

@@ -23,11 +23,7 @@ const Page: NextPage<Props> = ({}) => {
     notFound();
   }
 
-  return (
-    <div>
-      <Mail mailbox={mailbox} num={num} />
-    </div>
-  );
+  return <Mail mailbox={mailbox} num={num} />;
 };
 
 export default Page;
