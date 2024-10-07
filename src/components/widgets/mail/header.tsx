@@ -3,6 +3,8 @@ import { cn, datef } from "@/lib/utils";
 import { AddressInfo, Mail } from "@/schemas/mailbox";
 import { ChevronLeftIcon } from "lucide-react";
 import Link from "next/link";
+import { MailAvatar } from "./avatar";
+import { ClassValue } from "clsx";
 
 function From({ from }: { from: AddressInfo }) {
   return (
@@ -60,17 +62,26 @@ function Subject({ subject }: { subject?: string }) {
 export function MailHeader({ mailbox, mail }: { mailbox: string; mail: Mail }) {
   return (
     <div className="flex justify-between">
-      <Info mail={mail} mailbox={mailbox} />
+      <Info mail={mail} mailbox={mailbox} className="pt-2" />
       <div className="text-muted-foreground">{datef(mail.sentDate)}</div>
     </div>
   );
 }
 
-function Info({ mailbox, mail }: { mailbox: string; mail: Mail }) {
+function Info({
+  mailbox,
+  mail,
+  className,
+}: {
+  mailbox: string;
+  mail: Mail;
+  className?: ClassValue;
+}) {
   return (
-    <div>
+    <div className={cn("", className)}>
       <div className="flex items-center gap-x-2 group">
         <Back mailbox={mailbox} />
+        <MailAvatar name={mail.from.name} />
         <Subject subject={mail.subject} />
       </div>
       <From from={mail.from} />

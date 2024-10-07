@@ -49,7 +49,7 @@ export const Mailbox = ({ mailbox }: Props) => {
 
       <ScrollArea className="flex flex-col">
         <div className="space-y-2">
-          {isLoading || isRefetching ? (
+          {isLoading ? (
             [...Array(7)].map((m, i) => <MailMessageSkeleton key={i} />)
           ) : isError ? (
             <span>Не удалось загрузить письма</span>

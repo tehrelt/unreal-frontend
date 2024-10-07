@@ -4,6 +4,7 @@ import { cn, datef } from "@/lib/utils";
 import { Mail } from "@/schemas/mailbox";
 import { useRouter } from "next/navigation";
 import React from "react";
+import { MailAvatar } from "./avatar";
 
 type Props = {
   mail: Mail;
@@ -28,23 +29,52 @@ export const MailMessage = ({ mail, link }: Props) => {
       )}
       onClick={route}
     >
-      <div className="flex justify-between w-full">
-        <div className="flex gap-x-2">
-          {!mail.isRead && <Badge>new</Badge>}
-          {mail.from.name && <span>{mail.from.name}</span>}
-          <div className="text-muted-foreground underline">
-            {mail.from.address}
+      <div className="flex justify-between">
+        <div className="flex items-center gap-x-4">
+          <MailAvatar name={mail.from.name} />
+          <div className="flex flex-col">
+            <div className="flex gap-x-2">
+              {!mail.isRead && <Badge>new</Badge>}
+              {mail.from.name && <span>{mail.from.name}</span>}
+              <div className="text-muted-foreground underline">
+                {mail.from.address}
+              </div>
+            </div>
+            <div>
+              {mail.subject ? (
+                <div className="text-ellipsis overflow-hidden max-w-[960px]">
+                  {mail.subject}
+                </div>
+              ) : (
+                <span className="text-muted-foreground">(нет темы)</span>
+              )}
+            </div>
           </div>
         </div>
         <div className="text-muted-foreground">{datef(mail.sentDate)}</div>
       </div>
-      {mail.subject ? (
-        <div className="text-ellipsis overflow-hidden max-w-[960px]">
-          {mail.subject}
+      {/* <div className="flex justify-between w-full">
+        <div className="flex">
+          <MailAvatar name={mail.from.name} />
+          <div className="flex flex-col">
+            <div className="flex gap-x-2">
+              {!mail.isRead && <Badge>new</Badge>}
+              {mail.from.name && <span>{mail.from.name}</span>}
+              <div className="text-muted-foreground underline">
+                {mail.from.address}
+              </div>
+            </div>
+            <div className="text-muted-foreground">{datef(mail.sentDate)}</div>
+          </div>
         </div>
-      ) : (
-        <span className="text-muted-foreground">(нет темы)</span>
-      )}
+        {mail.subject ? (
+          <div className="text-ellipsis overflow-hidden max-w-[960px]">
+            {mail.subject}
+          </div>
+        ) : (
+          <span className="text-muted-foreground">(нет темы)</span>
+        )}
+      </div>  */}
     </div>
   );
 };
