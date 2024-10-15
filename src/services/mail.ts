@@ -33,6 +33,10 @@ class MailService {
     });
     return res.data;
   }
+
+  async send(fd: FormData) {
+    const res = await api.post("/send", fd);
+  }
 }
 
 export const mailService = new MailService();

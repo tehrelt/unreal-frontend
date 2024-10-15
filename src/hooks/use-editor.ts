@@ -1,4 +1,5 @@
 import { BlockType, InlineStyle } from "@/configs/draft-js";
+import { stateToHTML } from "@/lib/convert";
 import { EditorState, RichUtils } from "draft-js";
 import React from "react";
 
@@ -9,6 +10,7 @@ export type EditorApi = {
   currentBlockType: BlockType;
   toggleInlineStyle: (style: InlineStyle) => void;
   hasInlineStyle: (inlineStyle: InlineStyle) => boolean;
+  toHtml: () => string;
 };
 
 export const useEditor = (html?: string): EditorApi => {
@@ -34,6 +36,10 @@ export const useEditor = (html?: string): EditorApi => {
     [state]
   );
 
+  const toHtml = React.useCallback(() => {
+    return stateToHTML(state.getCurrentContent());
+  }, [state]);
+
   const currentBlockType = React.useMemo(() => {
     const selection = state.getSelection();
     const content = state.getCurrentContent();
@@ -50,11 +56,13 @@ export const useEditor = (html?: string): EditorApi => {
       toggleBlockType: toggleBlockType,
       hasInlineStyle: hasInlineStyle,
       toggleInlineStyle: toggleInlineStyle,
+      toHtml: toHtml,
     }),
     [
-      currentBlockType,
-      hasInlineStyle,
       state,
+      currentBlockType,
+      toHtml,
+      hasInlineStyle,
       toggleBlockType,
       toggleInlineStyle,
     ]

@@ -11,74 +11,127 @@ import {
   FormControl,
   FormField,
   FormItem,
-  FormLabel,
+  FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-
-type Props = {};
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
+import { EditorState } from "draft-js";
+import { stateToHTML } from "@/lib/convert";
+import { useMutation } from "@tanstack/react-query";
+import { mailService } from "@/services/mail";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 const schema = z.object({
-  subject: z.string().min(1).max(100),
-  to: z.string().min(1).email(),
-  body: z.string(),
+  subject: z
+    .string({ required_error: "Введите тему письма" })
+    .min(1, { message: "Пустая тема недопустима" })
+    .max(100),
+  to: z
+    .string({ required_error: "Введите получателя" })
+    .min(1)
+    .email({ message: "Введите корректный email" }),
+  body: z
+    .any()
+    .refine((v) => v instanceof EditorState)
+    .transform((state) => stateToHTML(state.getCurrentContent())),
   attachments: z.array(z.any()).nullish(),
 });
 type Schema = z.infer<typeof schema>;
 
-export const NewMailForm = (props: Props) => {
+export const NewMailForm = () => {
+  const router = useRouter();
+
   const form = useForm<Schema>({
     resolver: zodResolver(schema),
   });
+
+  const { mutate: send } = useMutation({
+    mutationKey: ["sendemail"],
+    mutationFn: async (data: FormData) => await mailService.send(data),
+    onError: (e) => {
+      toast.error(e.name, {
+        description: e.message,
+      });
+    },
+  });
+
+  const submit = async (data: Schema) => {
+    const fd = new FormData();
+
+    fd.append("to", data.to);
+    fd.append("subject", data.subject);
+    fd.append("body", data.body);
+
+    await send(fd);
+
+    router.refresh();
+  };
+
   return (
     <div className="px-2 py-2">
       <p className="font-bold text-4xl">Написать новое письмо</p>
 
-      <Form {...form}>
-        <form className="space-y-2">
-          <FormField
-            name="subject"
-            control={form.control}
-            render={({ field }) => (
-              <FormItem className="flex gap-x-2">
-                <FormLabel>Тема</FormLabel>
-                <FormControl>
-                  <Input placeholder="Введите тему" {...field} />
-                </FormControl>
-              </FormItem>
-            )}
-          />
+      <TextEditorProvider>
+        <Form {...form}>
+          <form
+            className="space-y-2"
+            onSubmit={form.handleSubmit(submit, console.error)}
+          >
+            <FormField
+              name="subject"
+              control={form.control}
+              render={({ field, fieldState: state }) => (
+                <FormItem className="space-y-1">
+                  <FormControl>
+                    <Input
+                      placeholder="Тема"
+                      className={cn(state.error && "border-red-500")}
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-          <FormField
-            name="to"
-            control={form.control}
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Получатели</FormLabel>
-                <FormControl>
-                  <Input placeholder="Введите получателей..." {...field} />
-                </FormControl>
-              </FormItem>
-            )}
-          />
+            <FormField
+              name="to"
+              control={form.control}
+              render={({ field, fieldState: state }) => (
+                <FormItem className="space-y-1">
+                  <FormControl>
+                    <Input
+                      placeholder="Введите получателей..."
+                      className={cn(state.error && "border-red-500")}
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-          <FormField
-            name="to"
-            control={form.control}
-            render={({ field }) => (
-              <FormItem>
-                <FormControl>
-                  <TextEditorProvider>
+            <FormField
+              name="body"
+              control={form.control}
+              render={({ field }) => (
+                <FormItem>
+                  <FormControl>
                     <div className="border rounded-md px-2 py-1 space-y-1">
                       <ToolPanel />
-                      <TextEditor className="p-2 rounded-md" />
+                      <TextEditor className="p-2 rounded-md" {...field} />
                     </div>
-                  </TextEditorProvider>
-                </FormControl>
-              </FormItem>
-            )}
-          />
-        </form>
-      </Form>
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+
+            <Button type="submit">Отправить</Button>
+          </form>
+        </Form>
+      </TextEditorProvider>
     </div>
   );
 };
