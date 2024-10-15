@@ -35,7 +35,9 @@ class MailService {
   }
 
   async send(fd: FormData) {
-    const res = await api.post("/send", fd);
+    const res = await api.post("/send", fd, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
   }
 }
 
