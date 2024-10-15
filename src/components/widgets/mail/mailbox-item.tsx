@@ -40,7 +40,7 @@ export const MailboxEntry = ({
     <div
       data-collapsed={isCollapsed}
       className={cn(
-        "hover:bg-muted px-2 py-2 mx-2 cursor-pointer rounded-md flex items-center gap-x-2",
+        "hover:bg-muted cursor-pointer rounded-md flex items-center gap-x-2",
         isCollapsed && "justify-center",
         activeMailbox === mailbox.name && "bg-muted",
         className
