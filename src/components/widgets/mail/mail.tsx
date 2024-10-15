@@ -50,7 +50,7 @@ export function Mail({ mailbox, num }: Props) {
               </>
             )}
             <hr />
-            <div className="relative ">
+            <div className="relative">
               {data.mail.body ? (
                 <div
                   dangerouslySetInnerHTML={{

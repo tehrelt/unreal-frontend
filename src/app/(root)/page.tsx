@@ -1,14 +1,14 @@
 "use client";
+import { Mailbox } from "@/components/widgets/mail/mailbox";
 import { useParams } from "@/hooks/search-params";
 import { NextPage } from "next";
-import { Mailbox } from "./mailbox";
 
 interface Props {}
 
 const Page: NextPage<Props> = ({}) => {
-  const { params } = useParams();
-  const mailbox = params.get("mailbox") || "INBOX";
-  return <Mailbox mailbox={mailbox} />;
+  const sp = useParams();
+  const mailbox = sp.params.get("mailbox");
+  return <Mailbox mailbox={mailbox || "INBOX"} />;
 };
 
 export default Page;

@@ -5,11 +5,9 @@ import { useQuery } from "@tanstack/react-query";
 export const useMailbox = (mailbox: string) => {
   const user = useUserStore((s) => s.user);
 
-  const q = useQuery({
+  return useQuery({
     queryKey: [user?.email, "mailbox", mailbox],
     queryFn: async () => await mailService.mailbox(mailbox),
     refetchOnWindowFocus: false,
   });
-
-  return q;
 };

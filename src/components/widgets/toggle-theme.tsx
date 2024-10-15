@@ -9,14 +9,12 @@ import { Toggle } from "../ui/toggle";
 export function ModeToggle() {
   const { setTheme, theme } = useTheme();
 
-  const pressed = theme === "dark";
-
   return (
     <Toggle
-      pressed={pressed}
+      pressed={theme === "dark"}
       onPressedChange={(pressed) => setTheme(pressed ? "dark" : "light")}
     >
-      {pressed ? <Moon size={16} /> : <Sun size={16} />}
+      {theme === "dark" ? <Moon size={16} /> : <Sun size={16} />}
     </Toggle>
   );
 }

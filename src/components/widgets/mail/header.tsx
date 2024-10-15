@@ -20,28 +20,26 @@ function From({ from }: { from: AddressInfo }) {
 
 function To({ to }: { to: AddressInfo }) {
   return (
-    <>
+    <div className="space-x-2">
       <span>
-        {to.name ? (
-          to.name
-        ) : (
-          <span className="text-muted-foreground">(нет имени)</span>
-        )}
+        {to.name ? to.name : <span className="text-muted-foreground"></span>}
       </span>
       <span className="text-xs text-muted-foreground  cursor-pointer hover:text-muted-foreground/80 hover:underline">
         {to.address}
       </span>
-    </>
+    </div>
   );
 }
 
 function ToList({ receivers }: { receivers: AddressInfo[] }) {
   return (
-    <div className="flex gap-x-2 items-center">
+    <div className="flex gap-x-2">
       <span className="text-muted-foreground">Получатель:</span>
-      {receivers.map((to) => (
-        <To key={to.address} to={to} />
-      ))}
+      <div className="flex flex-col">
+        {receivers.map((to) => (
+          <To key={to.address} to={to} />
+        ))}
+      </div>
     </div>
   );
 }

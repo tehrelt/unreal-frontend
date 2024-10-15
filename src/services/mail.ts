@@ -26,7 +26,9 @@ class MailService {
   }
 
   async mail(mailbox: string, num: number) {
-    const res = await api.get<MailResponse>(`/${mailbox}/mail`, {
+    const ep = `/${mailbox}/mail`;
+    console.log("fetch mail", { ep });
+    const res = await api.get<MailResponse>(ep, {
       params: { mailnum: num },
     });
     return res.data;
