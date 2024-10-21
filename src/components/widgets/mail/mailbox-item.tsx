@@ -30,7 +30,7 @@ export const MailboxEntry = ({
 
   const set = (key: string, value: string) => {
     const p = new URLSearchParams(params);
-    p.set(key, value);
+    p.set(key, decodeURIComponent(value));
     router.push(`/?${p.toString()}`);
   };
 

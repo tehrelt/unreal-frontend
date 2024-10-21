@@ -11,7 +11,15 @@ export function ThemeProvider({ children, ...props }: ThemeProviderProps) {
 }
 
 const Providers = ({ children }: React.PropsWithChildren) => {
-  const [queryClient] = React.useState(new QueryClient());
+  const [queryClient] = React.useState(
+    new QueryClient({
+      defaultOptions: {
+        queries: {
+          staleTime: 1 * 60 * 1000,
+        },
+      },
+    })
+  );
 
   return (
     <QueryClientProvider client={queryClient}>

@@ -31,7 +31,11 @@ export const Mailbox = ({ mailbox }: Props) => {
   } = useInfiniteQuery({
     queryKey: [mailbox, "messages"],
     queryFn: (meta) =>
-      mailService.messages({ mailbox, page: meta.pageParam, limit: 10 }),
+      mailService.messages({
+        mailbox: encodeURIComponent(mailbox),
+        page: meta.pageParam,
+        limit: 10,
+      }),
     initialPageParam: 1,
     getNextPageParam: (res) => res.hasNext,
     select: (res) => res.pages.map((p) => p.messages).flat(),
