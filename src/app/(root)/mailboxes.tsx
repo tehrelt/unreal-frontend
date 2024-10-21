@@ -29,6 +29,7 @@ export const Mailboxes = ({ isCollapsed = false }: Props) => {
               mailbox={mb}
               isCollapsed={isCollapsed}
               icon={mailboxIcon(mb.attributes)}
+              className="py-1 px-1"
             />
           ))
         )}

@@ -7,20 +7,39 @@ import {
   MailMessage,
   MailMessageSkeleton,
 } from "@/components/widgets/mail/message";
-import { useMailbox } from "@/hooks/mail/use-mailbox";
 import { RefreshCcw } from "lucide-react";
 import React from "react";
 import { toast } from "sonner";
-import { useScrollPosition } from "@/hooks/lib/use-scroll-position";
-import { Limit } from "../pagintation";
+import { useInfiniteQuery } from "@tanstack/react-query";
+import { mailService } from "@/services/mail";
+import { useIntersection } from "@/hooks/useIntersection";
 
 interface Props {
   mailbox: string;
 }
 
 export const Mailbox = ({ mailbox }: Props) => {
-  const { data, isLoading, isError, refetch, isRefetching } =
-    useMailbox(mailbox);
+  const {
+    data: messages,
+    refetch,
+    isRefetching,
+    isLoading,
+    isError,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  } = useInfiniteQuery({
+    queryKey: [mailbox, "messages"],
+    queryFn: (meta) =>
+      mailService.messages({ mailbox, page: meta.pageParam, limit: 10 }),
+    initialPageParam: 1,
+    getNextPageParam: (res) => res.hasNext,
+    select: (res) => res.pages.map((p) => p.messages).flat(),
+  });
+
+  const cursorRef = useIntersection(() => {
+    fetchNextPage();
+  });
 
   const refresh = async () => {
     await refetch();
@@ -42,16 +61,12 @@ export const Mailbox = ({ mailbox }: Props) => {
           <Badge className="rounded-lg px-4 py-2" variant={"secondary"}>
             <div className="flex gap-x-2 items-center w-full h-full">
               <span className="text-5xl font-extrabold">{mailbox}</span>
-              {isLoading || isRefetching ? (
-                <Skeleton className="h-6 w-6 rounded-full bg-primary-foreground" />
-              ) : (
-                data && <span className="text-2xl">{data.total}</span>
-              )}
+              {isLoading ||
+                (isRefetching && (
+                  <Skeleton className="h-6 w-6 rounded-full bg-primary-foreground" />
+                ))}
             </div>
           </Badge>
-        </div>
-        <div className="px-2">
-          <Limit className="w-[125px] text-muted-foreground" />
         </div>
       </div>
 
@@ -62,14 +77,27 @@ export const Mailbox = ({ mailbox }: Props) => {
           ) : isError ? (
             <span>Не удалось загрузить письма</span>
           ) : (
-            data &&
-            data.messages.map((m) => (
+            messages &&
+            messages.map((m) => (
               <MailMessage
                 key={m.id}
                 mail={m}
                 link={`/mail?mailbox=${mailbox}&num=${m.id}`}
               />
             ))
+          )}
+        </div>
+        <div
+          ref={cursorRef}
+          className="flex justify-center text-muted-foreground my-2"
+        >
+          {!hasNextPage && !isLoading && (
+            <span>Вы достигли конца списка писем</span>
+          )}
+          {isFetchingNextPage && (
+            <Skeleton className="px-2 py-1">
+              Загрузка следующей страницы
+            </Skeleton>
           )}
         </div>
       </ScrollArea>

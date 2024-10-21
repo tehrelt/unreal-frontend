@@ -78,13 +78,13 @@ export const MailboxEntry = ({
           <div className="flex justify-between w-full items-center">
             <div className="flex flex-col">
               <span>{mailbox.name}</span>
-              <div className="flex flex-wrap gap-x-2">
+              {/* <div className="flex flex-wrap gap-x-2">
                 {mailbox.attributes.map((attr) => (
                   <Badge key={attr} className="text-xs p-0 px-1">
                     {attr}
                   </Badge>
                 ))}
-              </div>
+              </div> */}
             </div>
             <div>
               {mailbox.unreadCount != 0 && <Badge>{mailbox.unreadCount}</Badge>}

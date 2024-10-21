@@ -18,7 +18,7 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { EditorState } from "draft-js";
 import { stateToHTML } from "@/lib/convert";
-import { useMutation } from "@tanstack/react-query";
+import { focusManager, useMutation } from "@tanstack/react-query";
 import { mailService } from "@/services/mail";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
@@ -50,6 +50,10 @@ export const NewMailForm = () => {
   const { mutate: send } = useMutation({
     mutationKey: ["sendemail"],
     mutationFn: async (data: FormData) => await mailService.send(data),
+    onSuccess: (req) => {
+      toast.success("Письмо отправлено");
+      router.push("/");
+    },
     onError: (e) => {
       toast.error(e.name, {
         description: e.message,
@@ -65,8 +69,6 @@ export const NewMailForm = () => {
     fd.append("body", data.body);
 
     await send(fd);
-
-    router.refresh();
   };
 
   return (
@@ -121,7 +123,10 @@ export const NewMailForm = () => {
                   <FormControl>
                     <div className="border rounded-md px-2 py-1 space-y-1">
                       <ToolPanel />
-                      <TextEditor className="p-2 rounded-md" {...field} />
+                      <TextEditor
+                        className="p-2 rounded-md"
+                        onChange={field.onChange}
+                      />
                     </div>
                   </FormControl>
                 </FormItem>
