@@ -8,6 +8,16 @@ import {
 import { Header } from "@/components/widgets/header";
 import React from "react";
 import { Mailboxes } from "./mailboxes";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
+import Link from "next/link";
+import { Pencil } from "lucide-react";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 export default function Layout({ children }: React.PropsWithChildren) {
   const [isCollapsed, setIsCollapsed] = React.useState(false);
@@ -25,7 +35,30 @@ export default function Layout({ children }: React.PropsWithChildren) {
           onCollapse={() => setIsCollapsed(true)}
           onResize={() => setIsCollapsed(false)}
         >
-          <Mailboxes isCollapsed={isCollapsed} />
+          <div className="flex flex-col px-4">
+            <Link passHref legacyBehavior href={"/send"}>
+              <Button>
+                {isCollapsed ? (
+                  <TooltipProvider>
+                    <Tooltip delayDuration={0}>
+                      <TooltipTrigger>
+                        <Pencil className="w-4" />
+                      </TooltipTrigger>
+                      <TooltipContent side="right">
+                        <span>Написать письмо</span>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                ) : (
+                  <div className="flex gap-x-1">
+                    <span>Написать</span>
+                    <Pencil className="w-4" />
+                  </div>
+                )}
+              </Button>
+            </Link>
+            <Mailboxes isCollapsed={isCollapsed} />
+          </div>
         </ResizablePanel>
         <ResizableHandle withHandle />
         <ResizablePanel className="flex-grow h-full overflow-auto">

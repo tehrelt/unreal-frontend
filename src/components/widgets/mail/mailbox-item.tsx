@@ -40,7 +40,7 @@ export const MailboxEntry = ({
     <div
       data-collapsed={isCollapsed}
       className={cn(
-        "hover:bg-muted px-2 py-2 mx-2 cursor-pointer rounded-md flex items-center gap-x-2",
+        "hover:bg-muted cursor-pointer rounded-md flex items-center gap-x-2",
         isCollapsed && "justify-center",
         activeMailbox === mailbox.name && "bg-muted",
         className
@@ -78,13 +78,13 @@ export const MailboxEntry = ({
           <div className="flex justify-between w-full items-center">
             <div className="flex flex-col">
               <span>{mailbox.name}</span>
-              <div className="flex flex-wrap gap-x-2">
+              {/* <div className="flex flex-wrap gap-x-2">
                 {mailbox.attributes.map((attr) => (
                   <Badge key={attr} className="text-xs p-0 px-1">
                     {attr}
                   </Badge>
                 ))}
-              </div>
+              </div> */}
             </div>
             <div>
               {mailbox.unreadCount != 0 && <Badge>{mailbox.unreadCount}</Badge>}
