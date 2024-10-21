@@ -85,13 +85,13 @@ export const NewMailForm = ({ to }: { to?: string }) => {
             onSubmit={form.handleSubmit(submit, console.error)}
           >
             <FormField
-              name="subject"
+              name="to"
               control={form.control}
               render={({ field, fieldState: state }) => (
                 <FormItem className="space-y-1">
                   <FormControl>
                     <Input
-                      placeholder="Тема"
+                      placeholder="Введите получателей..."
                       className={cn(state.error && "border-red-500")}
                       {...field}
                     />
@@ -100,15 +100,14 @@ export const NewMailForm = ({ to }: { to?: string }) => {
                 </FormItem>
               )}
             />
-
             <FormField
-              name="to"
+              name="subject"
               control={form.control}
               render={({ field, fieldState: state }) => (
                 <FormItem className="space-y-1">
                   <FormControl>
                     <Input
-                      placeholder="Введите получателей..."
+                      placeholder="Тема"
                       className={cn(state.error && "border-red-500")}
                       {...field}
                     />

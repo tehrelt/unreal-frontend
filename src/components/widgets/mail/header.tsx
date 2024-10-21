@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { cn, datef } from "@/lib/utils";
+import { cn, datef, PropsWithClassname } from "@/lib/utils";
 import { AddressInfo, Mail } from "@/schemas/mailbox";
 import { ChevronDown, ChevronLeftIcon, ChevronUp } from "lucide-react";
 import Link from "next/link";
@@ -8,20 +8,16 @@ import { ClassValue } from "clsx";
 import React from "react";
 import Email from "./email";
 
-function From({ from }: { from: AddressInfo }) {
+function From({ from, className }: { from: AddressInfo } & PropsWithClassname) {
   return (
     <div className="flex gap-x-2 items-center">
       <span className="text-muted-foreground">Отправитель:</span>
-      {/* <span>{from.name}</span>
-      <span className="text-xs text-muted-foreground  cursor-pointer hover:text-muted-foreground/80 hover:underline">
-        {from.address}
-      </span> */}
       <Email address={from.address} name={from.name} />
     </div>
   );
 }
 
-function To({ to }: { to: AddressInfo }) {
+function To({ to, className }: { to: AddressInfo } & PropsWithClassname) {
   return <Email address={to.address} name={to.name} />;
 }
 
@@ -33,12 +29,13 @@ function ToList({ receivers }: { receivers: AddressInfo[] }) {
   return (
     <div className="flex gap-x-2">
       <span className="text-muted-foreground">Получатель:</span>
-      <div className="flex flex-col">
-        {receivers.slice(0, 3).map((to) => (
-          <To key={to.address} to={to} />
-        ))}
-
-        <div className="flex bg-muted rounded-md">
+      <div>
+        <div className="flex flex-wrap gap-x-1">
+          {receivers.slice(0, 3).map((to) => (
+            <To key={to.address} to={to} />
+          ))}
+        </div>
+        <div className="flex gap-x-1">
           {receivers.length > 3 && (
             <Button onClick={toggleCollapsed} variant={"ghost"}>
               <div className="flex items-center gap-x-1">
@@ -56,13 +53,15 @@ function ToList({ receivers }: { receivers: AddressInfo[] }) {
               </div>
             </Button>
           )}
-          {!collapsed && (
-            <div className="flex items-center px-2">
-              {receivers.slice(3).map((to) => (
-                <To key={to.address} to={to} />
-              ))}
-            </div>
-          )}
+          <div className="flex bg-muted rounded-md">
+            {!collapsed && (
+              <div className="flex flex-wrap items-center gap-x-1 px-2 max-w-lg">
+                {receivers.slice(3).map((to) => (
+                  <To key={to.address} to={to} />
+                ))}
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </div>
