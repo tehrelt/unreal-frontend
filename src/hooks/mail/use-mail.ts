@@ -1,10 +1,10 @@
 import { mailService } from "@/services/mail";
 import { useQuery } from "@tanstack/react-query";
 
-export const useMail = (mailbox: string, num: number) => {
+export const useMessage = (mailbox: string, num: number) => {
   const q = useQuery({
-    queryKey: ["mail", mailbox, num],
-    queryFn: async () => await mailService.mail(mailbox, num),
+    queryKey: ["message", mailbox, num],
+    queryFn: async () => await mailService.message(mailbox, num),
     refetchOnWindowFocus: false,
   });
 

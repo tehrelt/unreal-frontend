@@ -40,11 +40,14 @@ const schema = z.object({
 });
 type Schema = z.infer<typeof schema>;
 
-export const NewMailForm = () => {
+export const NewMailForm = ({ to }: { to?: string }) => {
   const router = useRouter();
 
   const form = useForm<Schema>({
     resolver: zodResolver(schema),
+    defaultValues: {
+      to: to,
+    },
   });
 
   const { mutate: send } = useMutation({

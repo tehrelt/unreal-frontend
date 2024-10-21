@@ -1,44 +1,69 @@
 import { Button } from "@/components/ui/button";
 import { cn, datef } from "@/lib/utils";
 import { AddressInfo, Mail } from "@/schemas/mailbox";
-import { ChevronLeftIcon } from "lucide-react";
+import { ChevronDown, ChevronLeftIcon, ChevronUp } from "lucide-react";
 import Link from "next/link";
 import { MailAvatar } from "./avatar";
 import { ClassValue } from "clsx";
+import React from "react";
+import Email from "./email";
 
 function From({ from }: { from: AddressInfo }) {
   return (
     <div className="flex gap-x-2 items-center">
       <span className="text-muted-foreground">Отправитель:</span>
-      <span>{from.name}</span>
+      {/* <span>{from.name}</span>
       <span className="text-xs text-muted-foreground  cursor-pointer hover:text-muted-foreground/80 hover:underline">
         {from.address}
-      </span>
+      </span> */}
+      <Email address={from.address} name={from.name} />
     </div>
   );
 }
 
 function To({ to }: { to: AddressInfo }) {
-  return (
-    <div className="space-x-2">
-      <span>
-        {to.name ? to.name : <span className="text-muted-foreground"></span>}
-      </span>
-      <span className="text-xs text-muted-foreground  cursor-pointer hover:text-muted-foreground/80 hover:underline">
-        {to.address}
-      </span>
-    </div>
-  );
+  return <Email address={to.address} name={to.name} />;
 }
 
 function ToList({ receivers }: { receivers: AddressInfo[] }) {
+  const [collapsed, setCollapsed] = React.useState(true);
+
+  const toggleCollapsed = () => setCollapsed(!collapsed);
+
   return (
     <div className="flex gap-x-2">
       <span className="text-muted-foreground">Получатель:</span>
       <div className="flex flex-col">
-        {receivers.map((to) => (
+        {receivers.slice(0, 3).map((to) => (
           <To key={to.address} to={to} />
         ))}
+
+        <div className="flex bg-muted rounded-md">
+          {receivers.length > 3 && (
+            <Button onClick={toggleCollapsed} variant={"ghost"}>
+              <div className="flex items-center gap-x-1">
+                {collapsed ? (
+                  <>
+                    <span>и ещё {receivers.length - 3} получателей</span>
+                    <ChevronDown size={16} />
+                  </>
+                ) : (
+                  <>
+                    <span>Свернуть</span>
+                    <ChevronUp size={16} />
+                  </>
+                )}
+              </div>
+            </Button>
+          )}
+          {!collapsed && (
+            <div className="flex items-center px-2">
+              {receivers.slice(3).map((to) => (
+                <To key={to.address} to={to} />
+              ))}
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

@@ -1,6 +1,6 @@
 "use client";
 import { API_HOST } from "@/const/env";
-import { useMail } from "@/hooks/mail/use-mail";
+import { useMessage } from "@/hooks/mail/use-mail";
 import { useTitle } from "@/hooks/use-title";
 import { useUser } from "@/hooks/use-user";
 import { useEffect } from "react";
@@ -14,7 +14,7 @@ type Props = {
 };
 
 export function Mail({ mailbox, num }: Props) {
-  const { data, isLoading, isError } = useMail(mailbox, num);
+  const { data, isLoading, isError } = useMessage(mailbox, num);
   const { set: setTitle } = useTitle();
   const { data: user } = useUser();
 

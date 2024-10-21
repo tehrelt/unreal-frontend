@@ -30,12 +30,9 @@ class MailService {
     return res.data;
   }
 
-  async mail(mailbox: string, mailnum: number) {
-    const ep = `/${mailbox}/mail`;
-    console.log("fetch mail", { ep });
-    const res = await api.get<MailResponse>(ep, {
-      params: { mailnum },
-    });
+  async message(mailbox: string, mailnum: number) {
+    const ep = `/${mailbox}/${mailnum}`;
+    const res = await api.get<MailResponse>(ep);
     return res.data;
   }
 
@@ -43,6 +40,9 @@ class MailService {
     const res = await api.post("/send", fd, {
       headers: { "Content-Type": "multipart/form-data" },
     });
+    if (res.status != 200) {
+      throw Error(res.statusText, res.data);
+    }
   }
 }
 
