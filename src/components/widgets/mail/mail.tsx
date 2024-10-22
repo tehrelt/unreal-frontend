@@ -7,6 +7,7 @@ import { useEffect } from "react";
 import { AttachmentsList } from "./attachments/attachments-list";
 import { MailHeader } from "./header";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import DOMPurify from "dompurify";
 
 type Props = {
   mailbox: string;
@@ -54,7 +55,7 @@ export function Mail({ mailbox, num }: Props) {
               {data.mail.body ? (
                 <div
                   dangerouslySetInnerHTML={{
-                    __html: data.mail.body,
+                    __html: DOMPurify.sanitize(data.mail.body),
                   }}
                 />
               ) : (
