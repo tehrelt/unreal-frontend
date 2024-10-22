@@ -12,6 +12,7 @@ import { cn } from "@/lib/utils";
 import { Mailbox } from "@/schemas/mailbox";
 import { ClassValue } from "clsx";
 import { LucideIcon } from "lucide-react";
+import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 
 export const MailboxEntry = ({
@@ -25,27 +26,16 @@ export const MailboxEntry = ({
   icon: LucideIcon;
   className?: ClassValue;
 }) => {
-  const router = useRouter();
-  const params = useSearchParams();
-
-  const set = (key: string, value: string) => {
-    const p = new URLSearchParams(params);
-    p.set(key, decodeURIComponent(value));
-    router.push(`/?${p.toString()}`);
-  };
-
-  const activeMailbox = params.get("mailbox");
-
   return (
-    <div
+    <Link
       data-collapsed={isCollapsed}
       className={cn(
         "hover:bg-muted cursor-pointer rounded-md flex items-center gap-x-2",
         isCollapsed && "justify-center",
-        activeMailbox === mailbox.name && "bg-muted",
+        // activeMailbox === mailbox.name && "bg-muted",
         className
       )}
-      onClick={() => set("mailbox", mailbox.name)}
+      href={`/${encodeURIComponent(mailbox.name)}`}
     >
       {isCollapsed ? (
         <TooltipProvider delayDuration={0}>
@@ -92,7 +82,7 @@ export const MailboxEntry = ({
           </div>
         </>
       )}
-    </div>
+    </Link>
   );
 };
 

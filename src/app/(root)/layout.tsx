@@ -9,7 +9,6 @@ import { Header } from "@/components/widgets/header";
 import React from "react";
 import { Mailboxes } from "./mailboxes";
 import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { Pencil } from "lucide-react";
 import {
