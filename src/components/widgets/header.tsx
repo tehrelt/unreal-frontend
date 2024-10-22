@@ -31,7 +31,16 @@ export const Header = ({ className }: Props) => {
       </div>
       <div></div>
       <div className="flex items-center gap-x-2 justify-end">
-        <div>{user?.email}</div>
+        {user?.name ? (
+          <div className="flex flex-col text-end">
+            <span>{user?.name}</span>
+            <span className="text-muted-foreground">{user?.email}</span>
+          </div>
+        ) : (
+          <div>
+            <span>{user?.email}</span>
+          </div>
+        )}
         <LogoutButton variant={"ghost"}>
           <LogOut size={16} />
         </LogoutButton>

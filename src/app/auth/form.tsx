@@ -1,4 +1,5 @@
 "use client";
+import { Button } from "@/components/ui/button";
 import {
   Select,
   SelectContent,
@@ -9,11 +10,9 @@ import {
 import AuthForm from "@/components/widgets/forms/auth";
 import { LoginDto, LoginResponseDto } from "@/schemas/login";
 import { useCredentials } from "@/store/credentials";
-import { NextPage } from "next";
-import { useRouter, useSearchParams } from "next/navigation";
-import React from "react";
-import { Button } from "@/components/ui/button";
 import { Trash } from "lucide-react";
+import { useRouter } from "next/navigation";
+import React from "react";
 
 interface Props {
   from?: string;
@@ -29,9 +28,14 @@ export const Form = ({ from }: Props) => {
   const clearCred = () => setCredIndex("");
 
   const onAuth = (req: LoginDto, res: LoginResponseDto) => {
-    const url = from ?? "/";
-    router.push(url);
     save({ email: req.email });
+
+    if (res.firstLogon) {
+      router.push("/start");
+    } else {
+      const url = from ?? "/";
+      router.push(url);
+    }
   };
 
   return (

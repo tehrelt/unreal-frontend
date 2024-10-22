@@ -9,10 +9,11 @@ export const useUser = () => {
   const q = useQuery({
     queryKey: ["me"],
     queryFn: async () => authService.me(),
+    retry: false,
   });
 
   if (q.isError) {
-    router.replace(`/auth?from=${pathname}`);
+    // router.replace(`/auth?from=${pathname}`);
     toast.error(q.error.name, {
       description: q.error.message,
     });

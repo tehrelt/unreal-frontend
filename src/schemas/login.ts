@@ -20,6 +20,7 @@ export const credentialsSchema = loginSchema.omit({
 
 export const loginResponeSchema = z.object({
   token: z.string(),
+  firstLogon: z.boolean(),
 });
 
 export type LoginDto = z.infer<typeof loginSchema>;
