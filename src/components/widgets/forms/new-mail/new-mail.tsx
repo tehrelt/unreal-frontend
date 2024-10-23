@@ -22,6 +22,7 @@ import { focusManager, useMutation } from "@tanstack/react-query";
 import { mailService } from "@/services/mail";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { X } from "lucide-react";
 
 const schema = z.object({
   subject: z
@@ -36,7 +37,6 @@ const schema = z.object({
     .any()
     .refine((v) => v instanceof EditorState)
     .transform((state) => stateToHTML(state.getCurrentContent())),
-  attachments: z.array(z.any()).nullish(),
 });
 type Schema = z.infer<typeof schema>;
 
@@ -49,6 +49,14 @@ export const NewMailForm = ({ to }: { to?: string }) => {
       to: to,
     },
   });
+
+  const [files, setFiles] = React.useState<File[]>([]);
+
+  const appendAttachments = (files: File[]) =>
+    setFiles((ff) => [...ff, ...files]);
+
+  const removeAttachment = (name: string) =>
+    setFiles((ff) => ff.filter((f) => f.name !== name));
 
   const { mutate: send } = useMutation({
     mutationKey: ["sendemail"],
@@ -70,6 +78,10 @@ export const NewMailForm = ({ to }: { to?: string }) => {
     fd.append("to", data.to);
     fd.append("subject", data.subject);
     fd.append("body", data.body);
+
+    files?.forEach((f) => {
+      fd.append("attachment", f);
+    });
 
     await send(fd);
   };
@@ -134,6 +146,42 @@ export const NewMailForm = ({ to }: { to?: string }) => {
                 </FormItem>
               )}
             />
+
+            <Input
+              type="file"
+              multiple
+              onChange={(e) =>
+                appendAttachments(Array.from(e.target.files || []))
+              }
+            />
+            {files && (
+              <div>
+                <div>Прикрепленные файлы</div>
+                <div className="flex flex-wrap gap-x-2 gap-y-1">
+                  {Array.from(files).map((f) => (
+                    <div
+                      key={f.name}
+                      className="flex justify-between items-center px-2 py-1 border border-muted rounded-sm w-72"
+                    >
+                      <div className="">
+                        <p className="truncate max-w-60">{f.name}</p>
+                        <p className="text-muted-foreground text-xs">
+                          {f.size} байт
+                        </p>
+                      </div>
+                      <Button
+                        className="h-fit w-fit p-1"
+                        variant={"destructive"}
+                        type="button"
+                        onClick={() => removeAttachment(f.name)}
+                      >
+                        <X size={16} />
+                      </Button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
 
             <Button type="submit">Отправить</Button>
           </form>
