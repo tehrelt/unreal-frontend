@@ -23,6 +23,7 @@ import { mailService } from "@/services/mail";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { X } from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const schema = z.object({
   subject: z
@@ -58,7 +59,7 @@ export const NewMailForm = ({ to }: { to?: string }) => {
   const removeAttachment = (name: string) =>
     setFiles((ff) => ff.filter((f) => f.name !== name));
 
-  const { mutate: send } = useMutation({
+  const { mutate: send, isPending } = useMutation({
     mutationKey: ["sendemail"],
     mutationFn: async (data: FormData) => await mailService.send(data),
     onSuccess: (req) => {
@@ -183,7 +184,22 @@ export const NewMailForm = ({ to }: { to?: string }) => {
               </div>
             )}
 
-            <Button type="submit">Отправить</Button>
+            <div className="w-64 h-8">
+              {!isPending ? (
+                <Button
+                  disabled={isPending}
+                  type="submit"
+                  variant={isPending ? "secondary" : "default"}
+                  className="w-full h-full"
+                >
+                  Отправить
+                </Button>
+              ) : (
+                <Skeleton className="flex items-center justify-center h-full">
+                  Отправить
+                </Skeleton>
+              )}
+            </div>
           </form>
         </Form>
       </TextEditorProvider>
