@@ -12,13 +12,13 @@ function From({ from, className }: { from: AddressInfo } & PropsWithClassname) {
   return (
     <div className="flex gap-x-2 items-center">
       <span className="text-muted-foreground">Отправитель:</span>
-      <Email address={from.address} name={from.name} />
+      <Email info={from} />
     </div>
   );
 }
 
 function To({ to, className }: { to: AddressInfo } & PropsWithClassname) {
-  return <Email address={to.address} name={to.name} />;
+  return <Email info={to} />;
 }
 
 function ToList({ receivers }: { receivers: AddressInfo[] }) {
@@ -29,13 +29,13 @@ function ToList({ receivers }: { receivers: AddressInfo[] }) {
   return (
     <div className="flex gap-x-2">
       <span className="text-muted-foreground">Получатель:</span>
-      <div>
+      <div className="space-y-1">
         <div className="flex flex-wrap gap-x-1">
           {receivers.slice(0, 3).map((to) => (
             <To key={to.address} to={to} />
           ))}
         </div>
-        <div className="flex gap-x-1">
+        <div className="flex">
           {receivers.length > 3 && (
             <Button onClick={toggleCollapsed} variant={"ghost"}>
               <div className="flex items-center gap-x-1">
@@ -53,9 +53,9 @@ function ToList({ receivers }: { receivers: AddressInfo[] }) {
               </div>
             </Button>
           )}
-          <div className="flex bg-muted rounded-md">
+          <div className="flex  rounded-md">
             {!collapsed && (
-              <div className="flex flex-wrap items-center gap-x-1 px-2 max-w-lg">
+              <div className="flex flex-wrap items-center gap-x-2 gap-y-1 px-2 max-w-lg">
                 {receivers.slice(3).map((to) => (
                   <To key={to.address} to={to} />
                 ))}
@@ -103,11 +103,13 @@ function Info({
     <div className={cn("", className)}>
       <div className="flex items-center gap-x-2 group">
         <Back mailbox={mailbox} />
-        <MailAvatar name={mail.from.name} />
+        <MailAvatar name={mail.from.name} src={mail.from.picture} />
         <Subject subject={mail.subject} />
       </div>
-      <From from={mail.from} />
-      <ToList receivers={mail.to} />
+      <div className="space-y-1">
+        <From from={mail.from} />
+        <ToList receivers={mail.to} />
+      </div>
     </div>
   );
 }

@@ -31,7 +31,7 @@ export const MailMessage = ({ mail, link }: Props) => {
     >
       <div className="flex justify-between">
         <div className="flex items-center gap-x-4">
-          <MailAvatar name={mail.from.name} />
+          <MailAvatar name={mail.from.name} src={mail.from.picture} />
           <div className="flex flex-col">
             <div className="flex gap-x-2">
               {!mail.isRead && <Badge>new</Badge>}

@@ -8,8 +8,9 @@ export const mailboxSchema = z.object({
 export type Mailbox = z.infer<typeof mailboxSchema>;
 
 export const addressSchema = z.object({
-  name: z.string(),
   address: z.string(),
+  name: z.string(),
+  picture: z.string().optional(),
 });
 
 export type AddressInfo = z.infer<typeof addressSchema>;

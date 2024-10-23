@@ -74,7 +74,7 @@ const StartForm = (props: Props) => {
     stop();
   };
 
-  const [file, setFile] = React.useState<file | undefined>();
+  const [file, setFile] = React.useState<File | undefined>();
 
   return (
     <Form {...form}>
@@ -106,12 +106,13 @@ const StartForm = (props: Props) => {
                   <FormLabel>Файл</FormLabel>
                   <FormControl>
                     <Input
-                      {...field}
                       placeholder="file"
                       type="file"
                       formEncType="multipart/form-data"
                       onChange={(e) => {
-                        setFile(e.target.files[0]);
+                        if (e.target.files) {
+                          setFile(e.target.files[0]);
+                        }
                       }}
                     />
                   </FormControl>
@@ -120,7 +121,7 @@ const StartForm = (props: Props) => {
             />
           </CardContent>
           <CardFooter>
-            {name ? (
+            {!!name || file ? (
               <Button type="submit">Сохранить</Button>
             ) : (
               <Button variant={"secondary"} type="button" onClick={onSkip}>
