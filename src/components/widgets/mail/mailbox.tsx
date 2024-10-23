@@ -13,12 +13,15 @@ import { toast } from "sonner";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { mailService } from "@/services/mail";
 import { useIntersection } from "@/hooks/useIntersection";
+import { useUser } from "@/hooks/use-user";
 
 interface Props {
   mailbox: string;
 }
 
 export const Mailbox = ({ mailbox }: Props) => {
+  const { data: user } = useUser();
+
   const {
     data: messages,
     refetch,
@@ -29,7 +32,7 @@ export const Mailbox = ({ mailbox }: Props) => {
     hasNextPage,
     isFetchingNextPage,
   } = useInfiniteQuery({
-    queryKey: [mailbox, "messages"],
+    queryKey: ["messages", { email: user?.email, mailbox }],
     queryFn: (meta) =>
       mailService.messages({
         mailbox: encodeURIComponent(mailbox),

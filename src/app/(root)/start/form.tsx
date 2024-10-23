@@ -16,7 +16,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { UpdateUser, updateUserSchema } from "@/schemas/user";
+import { updateUserSchema } from "@/schemas/user";
 import { userService } from "@/services/user";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -43,7 +43,7 @@ const StartForm = (props: Props) => {
 
   const { mutate } = useMutation({
     mutationKey: ["start-update"],
-    mutationFn: async (data: Schema) => await userService.update(data),
+    mutationFn: async (data: FormData) => await userService.update(data),
     onSuccess: () => {
       toast.success("Сохранено");
       qc.invalidateQueries({ queryKey: ["me"] });
@@ -61,9 +61,20 @@ const StartForm = (props: Props) => {
   };
 
   const onSubmit = (data: Schema) => {
-    mutate(data);
+    const fd = new FormData();
+
+    if (data.name) {
+      fd.append("name", data.name);
+    }
+    if (file) {
+      fd.append("picture", file);
+    }
+
+    mutate(fd);
     stop();
   };
+
+  const [file, setFile] = React.useState<file | undefined>();
 
   return (
     <Form {...form}>
@@ -83,6 +94,27 @@ const StartForm = (props: Props) => {
                     <Input placeholder="Введите имя..." {...field} />
                   </FormControl>
                   <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="file"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Файл</FormLabel>
+                  <FormControl>
+                    <Input
+                      {...field}
+                      placeholder="file"
+                      type="file"
+                      formEncType="multipart/form-data"
+                      onChange={(e) => {
+                        setFile(e.target.files[0]);
+                      }}
+                    />
+                  </FormControl>
                 </FormItem>
               )}
             />

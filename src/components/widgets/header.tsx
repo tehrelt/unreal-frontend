@@ -9,6 +9,7 @@ import { LogOut } from "lucide-react";
 import { useSearchParams } from "next/navigation";
 import { Badge } from "../ui/badge";
 import Link from "next/link";
+import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 
 type Props = { className?: ClassValue };
 
@@ -41,6 +42,11 @@ export const Header = ({ className }: Props) => {
             <span>{user?.email}</span>
           </div>
         )}
+
+        <Avatar>
+          <AvatarImage src={user?.picture}></AvatarImage>
+          <AvatarFallback>{user?.name?.charAt(0)}</AvatarFallback>
+        </Avatar>
         <LogoutButton variant={"ghost"}>
           <LogOut size={16} />
         </LogoutButton>

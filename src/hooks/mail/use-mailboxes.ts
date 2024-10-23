@@ -6,8 +6,9 @@ export const useMailboxes = () => {
   const user = useUserStore((s) => s.user);
 
   const query = useQuery({
-    queryKey: [user?.email, "mailboxes"],
+    queryKey: ["mailboxes", user?.email],
     queryFn: mailService.mailboxes,
+    refetchInterval: 30 * 1000,
   });
 
   return query;
