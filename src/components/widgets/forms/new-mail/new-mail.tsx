@@ -24,6 +24,7 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { X } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Checkbox } from "@/components/ui/checkbox";
 
 const schema = z.object({
   subject: z
@@ -38,6 +39,7 @@ const schema = z.object({
     .any()
     .refine((v) => v instanceof EditorState)
     .transform((state) => stateToHTML(state.getCurrentContent())),
+  encrypt: z.boolean().default(false),
 });
 type Schema = z.infer<typeof schema>;
 
@@ -79,6 +81,7 @@ export const NewMailForm = ({ to }: { to?: string }) => {
     fd.append("to", data.to);
     fd.append("subject", data.subject);
     fd.append("body", data.body);
+    fd.append("encrypt", data.encrypt.toString());
 
     files?.forEach((f) => {
       fd.append("attachment", f);
@@ -184,21 +187,41 @@ export const NewMailForm = ({ to }: { to?: string }) => {
               </div>
             )}
 
-            <div className="w-64 h-8">
-              {!isPending ? (
-                <Button
-                  disabled={isPending}
-                  type="submit"
-                  variant={isPending ? "secondary" : "default"}
-                  className="w-full h-full"
-                >
-                  Отправить
-                </Button>
-              ) : (
-                <Skeleton className="flex items-center justify-center h-full">
-                  Отправить
-                </Skeleton>
-              )}
+            <div className="flex items-center gap-x-2">
+              <div className="w-64 h-8">
+                {!isPending ? (
+                  <Button
+                    disabled={isPending}
+                    type="submit"
+                    variant={isPending ? "secondary" : "default"}
+                    className="w-full h-full"
+                  >
+                    Отправить
+                  </Button>
+                ) : (
+                  <Skeleton className="flex items-center justify-center h-full">
+                    Отправить
+                  </Skeleton>
+                )}
+              </div>
+              <FormField
+                control={form.control}
+                name="encrypt"
+                render={({ field }) => (
+                  <FormItem>
+                    <div className="flex items-center gap-x-1">
+                      <FormControl>
+                        <Checkbox
+                          checked={field.value}
+                          // onChange={(v) => field.onChange(v)}
+                          onCheckedChange={field.onChange}
+                        />
+                      </FormControl>
+                      <span>Зашифровать?</span>
+                    </div>
+                  </FormItem>
+                )}
+              />
             </div>
           </form>
         </Form>
