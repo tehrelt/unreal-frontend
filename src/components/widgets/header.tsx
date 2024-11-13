@@ -47,28 +47,35 @@ export const Header = ({ className }: Props) => {
                 : health && "connected"
             }
           >
-            <span className="text-xl">
-              unreal{" "}
-              {health && <span>{!isHealthError && health.version} </span>}
-            </span>
+            <div className="text-xl flex gap-x-2">
+              <span>unreal</span>
+              {isLoadingHealth && (
+                <span className="flex gap-x-1 items-center">
+                  <Skeleton className="rounded-full w-2 h-2" />
+                  <Skeleton className="rounded-full w-2 h-2" />
+                  <Skeleton className="rounded-full w-2 h-2" />
+                </span>
+              )}
+              {health && <span>{!isHealthError && health.version}</span>}
+            </div>
           </Badge>
         </Link>
         {isHealthError ? (
           <p className="text-red-500 flex gap-x-1">
             <AlertTriangle /> Сервер недоступен
           </p>
-        ) : health ? (
-          <p
-            className={cn(
-              "flex",
-              health.tlsEnabled ? "text-green-500" : "text-red-500"
-            )}
-          >
-            <Lock />
-            TLS
-          </p>
         ) : (
-          <Skeleton className="py-1 px-2">Соединение с сервером</Skeleton>
+          health && (
+            <p
+              className={cn(
+                "flex",
+                health.tlsEnabled ? "text-green-500" : "text-red-500"
+              )}
+            >
+              <Lock />
+              TLS
+            </p>
+          )
         )}
       </div>
       <div></div>
