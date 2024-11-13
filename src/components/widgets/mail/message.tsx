@@ -5,6 +5,7 @@ import { Mail } from "@/schemas/mailbox";
 import { useRouter } from "next/navigation";
 import React from "react";
 import { MailAvatar } from "./avatar";
+import { Lock } from "lucide-react";
 
 type Props = {
   mail: Mail;
@@ -33,8 +34,9 @@ export const MailMessage = ({ mail, link }: Props) => {
         <div className="flex items-center gap-x-4">
           <MailAvatar name={mail.from.name} src={mail.from.picture} />
           <div className="flex flex-col">
-            <div className="flex gap-x-2">
+            <div className="flex gap-x-2 items-center">
               {!mail.isRead && <Badge>new</Badge>}
+              {mail.encrypted && <Lock className="h-4 w-4" />}
               {mail.from.name && <span>{mail.from.name}</span>}
               <div className="text-muted-foreground underline">
                 {mail.from.address}

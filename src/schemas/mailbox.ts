@@ -32,5 +32,6 @@ export const mailSchema = z.object({
   isRead: z.boolean(),
   body: z.string(),
   attachments: z.array(attachmentSchema),
+  encrypted: z.boolean(),
 });
 export type Mail = z.infer<typeof mailSchema>;

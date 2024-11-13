@@ -54,7 +54,7 @@ export const Mailbox = ({ mailbox }: Props) => {
   };
 
   return (
-    <div className="pt-2 mx-4 space-y-2 flex flex-col max-h-[calc(100vh-52px)] pb-6">
+    <div className="pt-2 mx-4 space-y-2 flex flex-col max-h-[calc(100vh-72px)] pb-6">
       <div className="flex justify-between items-end">
         <div className="flex items-center gap-x-2">
           <Button

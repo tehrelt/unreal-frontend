@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { cn, datef, PropsWithClassname } from "@/lib/utils";
 import { AddressInfo, Mail } from "@/schemas/mailbox";
-import { ChevronDown, ChevronLeftIcon, ChevronUp } from "lucide-react";
+import { ChevronDown, ChevronLeftIcon, ChevronUp, Lock } from "lucide-react";
 import Link from "next/link";
 import { MailAvatar } from "./avatar";
 import { ClassValue } from "clsx";
@@ -85,7 +85,15 @@ export function MailHeader({ mailbox, mail }: { mailbox: string; mail: Mail }) {
   return (
     <div className="flex justify-between">
       <Info mail={mail} mailbox={mailbox} className="pt-2" />
-      <div className="text-muted-foreground">{datef(mail.sentDate)}</div>
+      <div className="flex flex-col justify-between items-end">
+        <div className="text-muted-foreground">{datef(mail.sentDate)}</div>
+        {mail.encrypted && (
+          <div className="text-green-500 flex items-center">
+            <Lock />
+            Сообщение зашифровано
+          </div>
+        )}
+      </div>
     </div>
   );
 }

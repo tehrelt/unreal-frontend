@@ -44,6 +44,11 @@ class MailService {
       throw Error(res.statusText, res.data);
     }
   }
+
+  async health() {
+    const res = await api.get("/health");
+    return res.data;
+  }
 }
 
 export const mailService = new MailService();
