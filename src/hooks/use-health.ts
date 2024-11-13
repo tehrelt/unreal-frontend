@@ -7,14 +7,8 @@ export const useHealth = () => {
     queryKey: ["server-info"],
     queryFn: async () => mailService.health(),
     retry: false,
+    refetchInterval: 1000 * 5,
   });
-
-  if (q.isError) {
-    // router.replace(`/auth?from=${pathname}`);
-    toast.error(q.error.name, {
-      description: q.error.message,
-    });
-  }
 
   return q;
 };

@@ -5,7 +5,7 @@ import React from "react";
 import { ModeToggle } from "./toggle-theme";
 import { useUser } from "@/hooks/use-user";
 import LogoutButton from "./logout-button";
-import { Lock, LogOut } from "lucide-react";
+import { AlertTriangle, Lock, LogOut } from "lucide-react";
 import { useSearchParams } from "next/navigation";
 import { Badge } from "../ui/badge";
 import Link from "next/link";
@@ -17,12 +17,17 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "../ui/tooltip";
+import { Skeleton } from "../ui/skeleton";
 
 type Props = { className?: ClassValue };
 
 export const Header = ({ className }: Props) => {
   const { user } = useUser();
-  const { data: serverInfo } = useHealth();
+  const {
+    data: health,
+    isError: isHealthError,
+    isLoading: isLoadingHealth,
+  } = useHealth();
 
   return (
     <div
@@ -33,26 +38,38 @@ export const Header = ({ className }: Props) => {
     >
       <div className="flex items-center gap-x-2">
         <Link href={"/"}>
-          <Badge className="" variant={"secondary"}>
+          <Badge
+            variant={
+              isHealthError
+                ? "disconnected"
+                : isLoadingHealth
+                ? "secondary"
+                : health && "connected"
+            }
+          >
             <span className="text-xl">
-              unreal {serverInfo && <span>{serverInfo.version} </span>}
+              unreal{" "}
+              {health && <span>{!isHealthError && health.version} </span>}
             </span>
           </Badge>
         </Link>
-        <TooltipProvider>
-          <Tooltip delayDuration={0}>
-            <TooltipTrigger>
-              <Lock
-                className={cn(
-                  serverInfo.tlsEnabled ? "text-green-500" : "text-red-500"
-                )}
-              />
-            </TooltipTrigger>
-            <TooltipContent side="right">
-              {serverInfo.tlsEnabled ? "TLS Включен" : "TLS Выключен"}
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
+        {isHealthError ? (
+          <p className="text-red-500 flex gap-x-1">
+            <AlertTriangle /> Сервер недоступен
+          </p>
+        ) : health ? (
+          <p
+            className={cn(
+              "flex",
+              health.tlsEnabled ? "text-green-500" : "text-red-500"
+            )}
+          >
+            <Lock />
+            TLS
+          </p>
+        ) : (
+          <Skeleton className="py-1 px-2">Соединение с сервером</Skeleton>
+        )}
       </div>
       <div></div>
       <div className="flex items-center gap-x-2 justify-end">
