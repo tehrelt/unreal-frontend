@@ -1,0 +1,10 @@
+services:
+  next-app:
+    container_name: unreal-app
+    restart: always
+    build:
+      context: .
+    env_file:
+      - .env
+    ports:
+      - 80:3000
