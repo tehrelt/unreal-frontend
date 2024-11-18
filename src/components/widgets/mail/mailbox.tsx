@@ -95,10 +95,13 @@ export const Mailbox = ({ mailbox }: Props) => {
                     (m) => m.name === mailbox
                   );
                   if (!mb) {
-                    return mailbox == "INBOX" ? "Входящее" : mailbox;
+                    return "Не найдено";
                   }
 
-                  return localFolder(mb.attributes);
+                  return (
+                    localFolder(mb.attributes) ||
+                    (mailbox == "INBOX" ? "Входящее" : mailbox)
+                  );
                 })()}
               </span>
               {isLoading ||
