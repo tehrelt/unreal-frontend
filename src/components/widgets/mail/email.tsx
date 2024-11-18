@@ -18,11 +18,7 @@ type Props = {
 const Email = ({ info: { name, address, picture } }: Props) => {
   return (
     <div className="flex items-center gap-x-1 rounded-md bg-muted px-2 py-1">
-      {picture && (
-        <Avatar className="w-6 h-6">
-          <AvatarImage src={picture} className="w-8" />
-        </Avatar>
-      )}
+      {picture && <MailAvatar className="w-6 h-6" name={name} src={picture} />}
       <HoverCard>
         <HoverCardTrigger>
           <Link className="space-x-2" href={`/send?to=${address}`} passHref>

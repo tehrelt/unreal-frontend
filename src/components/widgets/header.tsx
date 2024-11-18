@@ -18,6 +18,7 @@ import {
   TooltipTrigger,
 } from "../ui/tooltip";
 import { Skeleton } from "../ui/skeleton";
+import { MailAvatar } from "./mail/avatar";
 
 type Props = { className?: ClassValue };
 
@@ -92,10 +93,7 @@ export const Header = ({ className }: Props) => {
         )}
 
         <Link passHref legacyBehavior href={"/start"}>
-          <Avatar className="cursor-pointer">
-            <AvatarImage src={user?.picture}></AvatarImage>
-            <AvatarFallback>{user?.name?.charAt(0)}</AvatarFallback>
-          </Avatar>
+          <MailAvatar name={user?.name!} src={user?.picture} />
         </Link>
         <LogoutButton variant={"ghost"}>
           <LogOut size={16} />
