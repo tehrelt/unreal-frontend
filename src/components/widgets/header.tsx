@@ -91,10 +91,12 @@ export const Header = ({ className }: Props) => {
           </div>
         )}
 
-        <Avatar>
-          <AvatarImage src={user?.picture}></AvatarImage>
-          <AvatarFallback>{user?.name?.charAt(0)}</AvatarFallback>
-        </Avatar>
+        <Link passHref legacyBehavior href={"/start"}>
+          <Avatar className="cursor-pointer">
+            <AvatarImage src={user?.picture}></AvatarImage>
+            <AvatarFallback>{user?.name?.charAt(0)}</AvatarFallback>
+          </Avatar>
+        </Link>
         <LogoutButton variant={"ghost"}>
           <LogOut size={16} />
         </LogoutButton>
