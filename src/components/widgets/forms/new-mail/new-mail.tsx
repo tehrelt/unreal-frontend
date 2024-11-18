@@ -93,6 +93,11 @@ export const NewMailForm = ({ to }: { to?: string }) => {
     },
   });
 
+  const { mutate: removeFromDrafts } = useMutation({
+    mutationKey: ["remove-draft", num],
+    mutationFn: async () => await mailService.delete(mailbox!, Number(num!)),
+  });
+
   const { mutate: saveDraft, isPending: draftIsPending } = useMutation({
     mutationKey: ["save-draft"],
     mutationFn: async (data: FormData) => await mailService.draft(data),
@@ -114,6 +119,7 @@ export const NewMailForm = ({ to }: { to?: string }) => {
     fd.append("subject", data.subject);
 
     if (data.body instanceof EditorState) {
+      console.log(data.body.getCurrentContent());
       fd.append("body", stateToHTML(data.body.getCurrentContent()));
     } else {
       fd.append("body", data.body);
@@ -124,6 +130,10 @@ export const NewMailForm = ({ to }: { to?: string }) => {
     files?.forEach((f) => {
       fd.append("attachment", f);
     });
+
+    if (draft) {
+      await removeFromDrafts();
+    }
 
     await send(fd);
   };
@@ -145,6 +155,10 @@ export const NewMailForm = ({ to }: { to?: string }) => {
     files?.forEach((f) => {
       fd.append("attachment", f);
     });
+
+    if (draft) {
+      await removeFromDrafts();
+    }
 
     await saveDraft(fd);
   };

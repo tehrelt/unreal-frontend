@@ -3,6 +3,8 @@ import { convertFromHTML, convertToHTML } from "draft-convert";
 
 export const stateToHTML = convertToHTML<InlineStyle, BlockType>({
   styleToHTML: (style) => {
+    console.log("style", style);
+
     switch (style) {
       case InlineStyle.bold:
         return <strong />;
@@ -15,6 +17,8 @@ export const stateToHTML = convertToHTML<InlineStyle, BlockType>({
     }
   },
   blockToHTML: (block) => {
+    console.log("block", block);
+
     switch (block.type) {
       case BlockType.h1:
         return <h1 />;
@@ -27,7 +31,7 @@ export const stateToHTML = convertToHTML<InlineStyle, BlockType>({
       case BlockType.code:
         return <code />;
       default:
-        return null;
+        return <p />;
     }
   },
 });

@@ -11,6 +11,9 @@ import DOMPurify from "dompurify";
 import { useMailboxes } from "@/hooks/mail/use-mailboxes";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useMutation } from "@tanstack/react-query";
+import { mailService } from "@/services/mail";
 
 type Props = {
   mailbox: string;
@@ -18,6 +21,7 @@ type Props = {
 };
 
 export function Mail({ mailbox, num }: Props) {
+  const router = useRouter();
   const { data, isLoading, isError } = useMessage(mailbox, num);
   const { set: setTitle } = useTitle();
   const { data: user } = useUser();
@@ -37,6 +41,10 @@ export function Mail({ mailbox, num }: Props) {
     return <div>Error</div>;
   }
 
+  const useDraft = async () => {
+    router.replace(`/send?mailbox=${mailbox}&num=${num}`);
+  };
+
   return (
     <div className="px-4 flex flex-col space-y-2 max-h-[calc(100vh-64px)]">
       <ScrollArea className="flex flex-col">
@@ -44,15 +52,9 @@ export function Mail({ mailbox, num }: Props) {
           <div className="space-y-4">
             <MailHeader mailbox={mailbox} mail={data.mail} />
             {isDraft(mailbox) && (
-              <Link
-                href={`/send?mailbox=${mailbox}&num=${num}`}
-                passHref
-                legacyBehavior
-              >
-                <Button className="p-2 h-fit" variant={"link"}>
-                  Использовать черновик
-                </Button>
-              </Link>
+              <Button className="p-2 h-fit" variant={"link"} onClick={useDraft}>
+                Использовать черновик
+              </Button>
             )}
             {data.mail.attachments && data.mail.attachments.length > 0 && (
               <>
