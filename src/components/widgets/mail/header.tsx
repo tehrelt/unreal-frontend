@@ -1,12 +1,22 @@
 import { Button } from "@/components/ui/button";
 import { cn, datef, PropsWithClassname } from "@/lib/utils";
 import { AddressInfo, Mail } from "@/schemas/mailbox";
-import { ChevronDown, ChevronLeftIcon, ChevronUp, Lock } from "lucide-react";
+import {
+  ChevronDown,
+  ChevronLeftIcon,
+  ChevronUp,
+  Lock,
+  Trash,
+} from "lucide-react";
 import Link from "next/link";
 import { MailAvatar } from "./avatar";
 import { ClassValue } from "clsx";
 import React from "react";
 import Email from "./email";
+import { useMutation } from "@tanstack/react-query";
+import { mailService } from "@/services/mail";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 function From({ from, className }: { from: AddressInfo } & PropsWithClassname) {
   return (
@@ -81,6 +91,40 @@ function Subject({ subject }: { subject?: string }) {
   );
 }
 
+export function MailActions({
+  mailbox,
+  mail,
+}: {
+  mailbox: string;
+  mail: Mail;
+}) {
+  const router = useRouter();
+
+  const { mutate: remove } = useMutation({
+    mutationKey: [`remove-message`, mail.id],
+    mutationFn: async () => await mailService.delete(mailbox, Number(mail.id)),
+    onSuccess: () => {
+      toast.success("Письмо удалено");
+      router.back();
+    },
+    onError: (error) => {
+      toast.error(error.message);
+    },
+  });
+
+  return (
+    <div className="flex justify-between">
+      <Button
+        className="p-2 h-fit"
+        onClick={async () => await remove()}
+        variant={"ghost"}
+      >
+        <Trash className="w-4 h-4" />
+      </Button>
+    </div>
+  );
+}
+
 export function MailHeader({ mailbox, mail }: { mailbox: string; mail: Mail }) {
   return (
     <div className="flex justify-between">
@@ -113,11 +157,13 @@ function Info({
         <Back mailbox={mailbox} />
         <MailAvatar name={mail.from.name} src={mail.from.picture} />
         <Subject subject={mail.subject} />
+        <MailActions mail={mail} mailbox={mailbox} />
       </div>
       <div className="space-y-1">
         <From from={mail.from} />
         <ToList receivers={mail.to} />
       </div>
+      <div></div>
     </div>
   );
 }
