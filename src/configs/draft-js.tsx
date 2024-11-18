@@ -4,6 +4,7 @@ import { DefaultDraftBlockRenderMap } from "draft-js";
 import { PropsWithChildren } from "react";
 import { Quote } from "lucide-react";
 export enum BlockType {
+  default = "default",
   h1 = "header-one",
   h2 = "header-two",
   h3 = "header-three",
@@ -43,6 +44,11 @@ const Code = ({ children }: PropsWithChildren) => (
 );
 
 const CUSTOM_BLOCK_RENDER_MAP = Immutable.Map({
+  [BlockType.default]: {
+    element: "div",
+    wrapper: <div />,
+  },
+
   [BlockType.h1]: {
     element: "div",
     wrapper: <H1 />,

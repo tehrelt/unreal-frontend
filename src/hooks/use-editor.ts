@@ -1,5 +1,5 @@
 import { BlockType, InlineStyle } from "@/configs/draft-js";
-import { stateToHTML } from "@/lib/convert";
+import { htmlToState, stateToHTML } from "@/lib/convert";
 import { EditorState, RichUtils } from "draft-js";
 import React from "react";
 
@@ -11,10 +11,16 @@ export type EditorApi = {
   toggleInlineStyle: (style: InlineStyle) => void;
   hasInlineStyle: (inlineStyle: InlineStyle) => boolean;
   toHtml: () => string;
+  fromHtml: (html: string) => void;
 };
 
 export const useEditor = (html?: string): EditorApi => {
-  const [state, setState] = React.useState(() => EditorState.createEmpty());
+  const [state, setState] = React.useState(() => {
+    console.log("editor init state", html);
+    return html
+      ? EditorState.createWithContent(htmlToState(html))
+      : EditorState.createEmpty();
+  });
 
   const toggleBlockType = React.useCallback((blockType: BlockType) => {
     setState((currentState) =>
@@ -32,6 +38,13 @@ export const useEditor = (html?: string): EditorApi => {
     (inlineStyle: InlineStyle) => {
       const currentStyle = state.getCurrentInlineStyle();
       return currentStyle.has(inlineStyle);
+    },
+    [state]
+  );
+
+  const fromHtml = React.useCallback(
+    (html: string) => {
+      setState(EditorState.createWithContent(htmlToState(html)));
     },
     [state]
   );
@@ -57,11 +70,13 @@ export const useEditor = (html?: string): EditorApi => {
       hasInlineStyle: hasInlineStyle,
       toggleInlineStyle: toggleInlineStyle,
       toHtml: toHtml,
+      fromHtml: fromHtml,
     }),
     [
       state,
       currentBlockType,
       toHtml,
+      fromHtml,
       hasInlineStyle,
       toggleBlockType,
       toggleInlineStyle,

@@ -11,5 +11,21 @@ export const useMailboxes = () => {
     refetchInterval: 30 * 1000,
   });
 
-  return query;
+  const isDraft = (mailbox: string): boolean => {
+    if (!query.data) {
+      return false;
+    }
+
+    const m = query.data.mailboxes.find(
+      (v) => v.name.localeCompare(mailbox) == 0
+    );
+
+    if (!m) {
+      return false;
+    }
+
+    return m.attributes.includes("\\Drafts");
+  };
+
+  return { ...query, isDraft };
 };

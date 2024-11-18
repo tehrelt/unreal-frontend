@@ -14,8 +14,12 @@ export const useEditorApi = () => {
   return context;
 };
 
-export const TextEditorProvider = ({ children }: React.PropsWithChildren) => {
-  const editorApi = useEditor();
+type Props = React.PropsWithChildren & {
+  html?: string;
+};
+
+export const TextEditorProvider = ({ html, children }: Props) => {
+  const editorApi = useEditor(html);
 
   return (
     <TextEditorContext.Provider value={editorApi}>

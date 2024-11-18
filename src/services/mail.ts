@@ -50,6 +50,15 @@ class MailService {
     }
   }
 
+  async draft(fd: FormData) {
+    const res = await api.post("/draft", fd, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
+    if (res.status != 200) {
+      throw Error(res.statusText, res.data);
+    }
+  }
+
   async health() {
     const res = await api.get("/health");
     return res.data;

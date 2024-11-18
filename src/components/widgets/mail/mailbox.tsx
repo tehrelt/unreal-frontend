@@ -41,7 +41,10 @@ export const Mailbox = ({ mailbox }: Props) => {
       }),
     initialPageParam: 1,
     getNextPageParam: (res) => res.hasNext,
-    select: (res) => res.pages.map((p) => p.messages).flat(),
+    select: (res) => {
+      console.log("pages", res.pages);
+      return res.pages.map((p) => p.messages).flat();
+    },
   });
 
   const cursorRef = useIntersection(() => {

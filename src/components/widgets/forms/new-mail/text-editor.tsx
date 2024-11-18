@@ -13,7 +13,7 @@ export const TextEditor: React.FC<TextEditorProps> = ({
   className,
   onChange,
 }) => {
-  const { state, onChange: stateChange, toHtml } = useEditorApi();
+  const { state, onChange: stateChange } = useEditorApi();
 
   const mergeChange = (s: EditorState) => {
     onChange(s);

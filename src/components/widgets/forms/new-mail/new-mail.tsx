@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useEffect } from "react";
 import { TextEditorProvider } from "./context";
 import { ToolPanel } from "./tool-panel";
 import { TextEditor } from "./text-editor";
@@ -17,10 +17,10 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { EditorState } from "draft-js";
-import { stateToHTML } from "@/lib/convert";
-import { focusManager, useMutation } from "@tanstack/react-query";
+import { htmlToState, stateToHTML } from "@/lib/convert";
+import { focusManager, useMutation, useQuery } from "@tanstack/react-query";
 import { mailService } from "@/services/mail";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { toast } from "sonner";
 import { X } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -45,6 +45,20 @@ type Schema = z.infer<typeof schema>;
 
 export const NewMailForm = ({ to }: { to?: string }) => {
   const router = useRouter();
+  const [draftHtml, setDraftHtml] = React.useState<string | undefined>();
+
+  const sp = useSearchParams();
+
+  const mailbox = sp.get("mailbox");
+  const num = sp.get("num");
+
+  const { data: draft, isLoading: draftLoading } = useQuery({
+    queryKey: ["draft"],
+    queryFn: async () =>
+      mailbox && num && !isNaN(Number(num))
+        ? await mailService.message(mailbox, Number(num))
+        : null,
+  });
 
   const form = useForm<Schema>({
     resolver: zodResolver(schema),
@@ -52,6 +66,14 @@ export const NewMailForm = ({ to }: { to?: string }) => {
       to: to,
     },
   });
+
+  useEffect(() => {
+    if (draft) {
+      form.setValue("to", draft.mail.to.map((v) => v.address).join(", "));
+      form.setValue("subject", draft.mail.subject);
+      setDraftHtml(draft.mail.body);
+    }
+  }, [draft, form]);
 
   const [files, setFiles] = React.useState<File[]>([]);
 
@@ -61,11 +83,25 @@ export const NewMailForm = ({ to }: { to?: string }) => {
   const removeAttachment = (name: string) =>
     setFiles((ff) => ff.filter((f) => f.name !== name));
 
-  const { mutate: send, isPending } = useMutation({
+  const { mutate: send, isPending: isSending } = useMutation({
     mutationKey: ["sendemail"],
     mutationFn: async (data: FormData) => await mailService.send(data),
     onSuccess: (req) => {
       toast.success("Письмо отправлено");
+      router.push("/");
+    },
+    onError: (e) => {
+      toast.error(e.name, {
+        description: e.message,
+      });
+    },
+  });
+
+  const { mutate: saveDraft, isPending: draftIsPending } = useMutation({
+    mutationKey: ["save-draft"],
+    mutationFn: async (data: FormData) => await mailService.draft(data),
+    onSuccess: (req) => {
+      toast.success("Письмо сохранено");
       router.push("/");
     },
     onError: (e) => {
@@ -90,142 +126,161 @@ export const NewMailForm = ({ to }: { to?: string }) => {
     await send(fd);
   };
 
+  const submitDraft = async (data: Schema) => {
+    const fd = new FormData();
+
+    fd.append("to", data.to);
+    fd.append("subject", data.subject);
+    fd.append("body", data.body);
+    fd.append("encrypt", data.encrypt.toString());
+
+    files?.forEach((f) => {
+      fd.append("attachment", f);
+    });
+
+    await saveDraft(fd);
+  };
+
   return (
     <div className="px-2 py-2">
       <p className="font-bold text-4xl">Написать новое письмо</p>
-
-      <TextEditorProvider>
-        <Form {...form}>
-          <form
-            className="space-y-2"
-            onSubmit={form.handleSubmit(submit, console.error)}
-          >
-            <FormField
-              name="to"
-              control={form.control}
-              render={({ field, fieldState: state }) => (
-                <FormItem className="space-y-1">
-                  <FormControl>
-                    <Input
-                      placeholder="Введите получателей..."
-                      className={cn(state.error && "border-red-500")}
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              name="subject"
-              control={form.control}
-              render={({ field, fieldState: state }) => (
-                <FormItem className="space-y-1">
-                  <FormControl>
-                    <Input
-                      placeholder="Тема"
-                      className={cn(state.error && "border-red-500")}
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              name="body"
-              control={form.control}
-              render={({ field }) => (
-                <FormItem>
-                  <FormControl>
-                    <div className="border rounded-md px-2 py-1 space-y-1">
-                      <ToolPanel />
-                      <TextEditor
-                        className="p-2 rounded-md"
-                        onChange={field.onChange}
-                      />
-                    </div>
-                  </FormControl>
-                </FormItem>
-              )}
-            />
-
-            <Input
-              type="file"
-              multiple
-              onChange={(e) =>
-                appendAttachments(Array.from(e.target.files || []))
-              }
-            />
-            {files && (
-              <div>
-                <div>Прикрепленные файлы</div>
-                <div className="flex flex-wrap gap-x-2 gap-y-1">
-                  {Array.from(files).map((f) => (
-                    <div
-                      key={f.name}
-                      className="flex justify-between items-center px-2 py-1 border border-muted rounded-sm w-72"
-                    >
-                      <div className="">
-                        <p className="truncate max-w-60">{f.name}</p>
-                        <p className="text-muted-foreground text-xs">
-                          {f.size} байт
-                        </p>
-                      </div>
-                      <Button
-                        className="h-fit w-fit p-1"
-                        variant={"destructive"}
-                        type="button"
-                        onClick={() => removeAttachment(f.name)}
-                      >
-                        <X size={16} />
-                      </Button>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            <div className="flex items-center gap-x-2">
-              <div className="w-64 h-8">
-                {!isPending ? (
-                  <Button
-                    disabled={isPending}
-                    type="submit"
-                    variant={isPending ? "secondary" : "default"}
-                    className="w-full h-full"
-                  >
-                    Отправить
-                  </Button>
-                ) : (
-                  <Skeleton className="flex items-center justify-center h-full">
-                    Отправить
-                  </Skeleton>
-                )}
-              </div>
+      {draftLoading ? (
+        <p>Загрузка...</p>
+      ) : (
+        <TextEditorProvider html={draft ? draft.mail.body : undefined}>
+          <Form {...form}>
+            <form
+              className="space-y-2"
+              onSubmit={form.handleSubmit(submit, console.error)}
+            >
               <FormField
+                name="to"
                 control={form.control}
-                name="encrypt"
-                render={({ field }) => (
-                  <FormItem>
-                    <div className="flex items-center gap-x-1">
-                      <FormControl>
-                        <Checkbox
-                          checked={field.value}
-                          // onChange={(v) => field.onChange(v)}
-                          onCheckedChange={field.onChange}
-                        />
-                      </FormControl>
-                      <span>Зашифровать?</span>
-                    </div>
+                render={({ field, fieldState: state }) => (
+                  <FormItem className="space-y-1">
+                    <FormControl>
+                      <Input
+                        placeholder="Введите получателей..."
+                        className={cn(state.error && "border-red-500")}
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
                   </FormItem>
                 )}
               />
-            </div>
-          </form>
-        </Form>
-      </TextEditorProvider>
+              <FormField
+                name="subject"
+                control={form.control}
+                render={({ field, fieldState: state }) => (
+                  <FormItem className="space-y-1">
+                    <FormControl>
+                      <Input
+                        placeholder="Тема"
+                        className={cn(state.error && "border-red-500")}
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                name="body"
+                control={form.control}
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <div className="border rounded-md px-2 py-1 space-y-1">
+                        <ToolPanel />
+                        <TextEditor
+                          className="p-2 rounded-md"
+                          onChange={field.onChange}
+                        />
+                      </div>
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+
+              <Input
+                type="file"
+                multiple
+                onChange={(e) =>
+                  appendAttachments(Array.from(e.target.files || []))
+                }
+              />
+              {files && (
+                <div>
+                  <div>Прикрепленные файлы</div>
+                  <div className="flex flex-wrap gap-x-2 gap-y-1">
+                    {Array.from(files).map((f) => (
+                      <div
+                        key={f.name}
+                        className="flex justify-between items-center px-2 py-1 border border-muted rounded-sm w-72"
+                      >
+                        <div className="">
+                          <p className="truncate max-w-60">{f.name}</p>
+                          <p className="text-muted-foreground text-xs">
+                            {f.size} байт
+                          </p>
+                        </div>
+                        <Button
+                          className="h-fit w-fit p-1"
+                          variant={"destructive"}
+                          type="button"
+                          onClick={() => removeAttachment(f.name)}
+                        >
+                          <X size={16} />
+                        </Button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              <div className="flex items-center gap-x-2">
+                <Button
+                  disabled={isSending}
+                  type="submit"
+                  variant={isSending ? "secondary" : "default"}
+                  className="w-64 h-8"
+                >
+                  Отправить
+                </Button>
+                <Button
+                  disabled={isSending}
+                  type="button"
+                  onClick={form.handleSubmit(submitDraft, console.error)}
+                  variant={isSending ? "secondary" : "default"}
+                  className="w-64 h-8"
+                >
+                  Сохранить
+                </Button>
+                <FormField
+                  control={form.control}
+                  name="encrypt"
+                  render={({ field }) => (
+                    <FormItem>
+                      <div className="flex items-center gap-x-1">
+                        <FormControl>
+                          <Checkbox
+                            checked={field.value}
+                            // onChange={(v) => field.onChange(v)}
+                            onCheckedChange={field.onChange}
+                          />
+                        </FormControl>
+                        <span>Зашифровать?</span>
+                      </div>
+                    </FormItem>
+                  )}
+                />
+              </div>
+            </form>
+          </Form>
+        </TextEditorProvider>
+      )}
     </div>
   );
 };

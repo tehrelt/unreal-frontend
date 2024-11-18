@@ -8,6 +8,9 @@ import { AttachmentsList } from "./attachments/attachments-list";
 import { MailHeader } from "./header";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import DOMPurify from "dompurify";
+import { useMailboxes } from "@/hooks/mail/use-mailboxes";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 type Props = {
   mailbox: string;
@@ -18,6 +21,7 @@ export function Mail({ mailbox, num }: Props) {
   const { data, isLoading, isError } = useMessage(mailbox, num);
   const { set: setTitle } = useTitle();
   const { data: user } = useUser();
+  const { isDraft } = useMailboxes();
 
   useEffect(() => {
     if (data) {
@@ -39,6 +43,17 @@ export function Mail({ mailbox, num }: Props) {
         {data && (
           <div className="space-y-4">
             <MailHeader mailbox={mailbox} mail={data.mail} />
+            {isDraft(mailbox) && (
+              <Link
+                href={`/send?mailbox=${mailbox}&num=${num}`}
+                passHref
+                legacyBehavior
+              >
+                <Button className="p-2 h-fit" variant={"link"}>
+                  Использовать черновик
+                </Button>
+              </Link>
+            )}
             {data.mail.attachments && data.mail.attachments.length > 0 && (
               <>
                 <hr />
