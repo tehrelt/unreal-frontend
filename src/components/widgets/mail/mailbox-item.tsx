@@ -8,6 +8,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { localFolder } from "@/const/attributes";
 import { cn } from "@/lib/utils";
 import { Mailbox } from "@/schemas/mailbox";
 import { ClassValue } from "clsx";
@@ -54,7 +55,8 @@ export const MailboxEntry = ({
                 {mailbox.unreadCount != 0 && (
                   <span>({mailbox.unreadCount}) </span>
                 )}
-                {mailbox.name}
+                {localFolder(mailbox.attributes) ||
+                  (mailbox.name === "INBOX" ? "Входящее" : mailbox.name)}
               </span>
             </TooltipContent>
           </Tooltip>
@@ -66,7 +68,10 @@ export const MailboxEntry = ({
           </div>
           <div className="flex justify-between w-full items-center">
             <div className="flex flex-col">
-              <span>{mailbox.name}</span>
+              <span>
+                {localFolder(mailbox.attributes) ||
+                  (mailbox.name === "INBOX" ? "Входящее" : mailbox.name)}
+              </span>
               {/* <div className="flex flex-wrap gap-x-2">
                 {mailbox.attributes.map((attr) => (
                   <Badge key={attr} className="text-xs p-0 px-1">
