@@ -13,7 +13,6 @@ import { Mailbox } from "@/schemas/mailbox";
 import { ClassValue } from "clsx";
 import { LucideIcon } from "lucide-react";
 import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
 
 export const MailboxEntry = ({
   mailbox,

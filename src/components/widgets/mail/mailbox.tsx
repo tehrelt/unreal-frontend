@@ -10,7 +10,7 @@ import {
 import { RefreshCcw } from "lucide-react";
 import React from "react";
 import { toast } from "sonner";
-import { useInfiniteQuery } from "@tanstack/react-query";
+import { useInfiniteQuery, useMutation } from "@tanstack/react-query";
 import { mailService } from "@/services/mail";
 import { useIntersection } from "@/hooks/useIntersection";
 import { useUser } from "@/hooks/use-user";
@@ -53,6 +53,22 @@ export const Mailbox = ({ mailbox }: Props) => {
     toast.success("Refreshed");
   };
 
+  const { mutate: removeMessage } = useMutation({
+    mutationFn: async (id: string) =>
+      await mailService.delete(mailbox, Number(id)),
+    onSuccess: () => {
+      toast.success("Письмо удалено");
+      refetch();
+    },
+    onError: () => {
+      toast.error("Не удалось удалить письмо");
+    },
+  });
+
+  const remove = async (id: string) => {
+    await removeMessage(id);
+  };
+
   return (
     <div className="pt-2 mx-4 space-y-2 flex flex-col max-h-[calc(100vh-72px)] pb-6">
       <div className="flex justify-between items-end">
@@ -87,6 +103,7 @@ export const Mailbox = ({ mailbox }: Props) => {
             messages &&
             messages.map((m) => (
               <MailMessage
+                remove={() => remove(m.id)}
                 key={m.id}
                 mail={m}
                 link={`/mail?mailbox=${mailbox}&num=${m.id}`}

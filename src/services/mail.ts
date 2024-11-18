@@ -36,6 +36,11 @@ class MailService {
     return res.data;
   }
 
+  async delete(mailbox: string, mailnum: number) {
+    const ep = `/${mailbox}/${mailnum}`;
+    const _ = await api.delete(ep);
+  }
+
   async send(fd: FormData) {
     const res = await api.post("/send", fd, {
       headers: { "Content-Type": "multipart/form-data" },
