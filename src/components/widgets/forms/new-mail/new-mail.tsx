@@ -34,13 +34,17 @@ const schema = z.object({
   to: z
     .string({ required_error: "Введите получателя" })
     .min(1)
-    .email({ message: "Введите корректный email" }),
+    .trim()
+    .transform((v) => v.split(","))
+    .pipe(
+      z.array(z.string().trim().email({ message: "Введите корректный email" }))
+    ),
   body: z.any(),
   encrypt: z.boolean().default(false),
 });
 type Schema = z.infer<typeof schema>;
 
-export const NewMailForm = ({ to }: { to?: string }) => {
+export const NewMailForm = ({ to }: { to?: string[] }) => {
   const router = useRouter();
 
   const sp = useSearchParams();
@@ -65,7 +69,10 @@ export const NewMailForm = ({ to }: { to?: string }) => {
 
   useEffect(() => {
     if (draft) {
-      form.setValue("to", draft.mail.to.map((v) => v.address).join(", "));
+      form.setValue(
+        "to",
+        draft.mail.to.map((v) => v.address)
+      );
       form.setValue("subject", draft.mail.subject);
       form.setValue("body", draft.mail.body);
     }
@@ -115,11 +122,13 @@ export const NewMailForm = ({ to }: { to?: string }) => {
   const submit = async (data: Schema) => {
     const fd = new FormData();
 
-    fd.append("to", data.to);
+    data.to.forEach((to) => {
+      fd.append("to", to);
+    });
+
     fd.append("subject", data.subject);
 
     if (data.body instanceof EditorState) {
-      console.log(data.body.getCurrentContent());
       fd.append("body", stateToHTML(data.body.getCurrentContent()));
     } else {
       fd.append("body", data.body);
@@ -141,7 +150,10 @@ export const NewMailForm = ({ to }: { to?: string }) => {
   const submitDraft = async (data: Schema) => {
     const fd = new FormData();
 
-    fd.append("to", data.to);
+    data.to.forEach((to) => {
+      fd.append("to", to);
+    });
+
     fd.append("subject", data.subject);
 
     if (data.body instanceof EditorState) {
