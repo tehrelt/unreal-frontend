@@ -35,17 +35,13 @@ const schema = z.object({
     .string({ required_error: "Введите получателя" })
     .min(1)
     .email({ message: "Введите корректный email" }),
-  body: z
-    .any()
-    .refine((v) => v instanceof EditorState)
-    .transform((state) => stateToHTML(state.getCurrentContent())),
+  body: z.any(),
   encrypt: z.boolean().default(false),
 });
 type Schema = z.infer<typeof schema>;
 
 export const NewMailForm = ({ to }: { to?: string }) => {
   const router = useRouter();
-  const [draftHtml, setDraftHtml] = React.useState<string | undefined>();
 
   const sp = useSearchParams();
 
@@ -71,7 +67,7 @@ export const NewMailForm = ({ to }: { to?: string }) => {
     if (draft) {
       form.setValue("to", draft.mail.to.map((v) => v.address).join(", "));
       form.setValue("subject", draft.mail.subject);
-      setDraftHtml(draft.mail.body);
+      form.setValue("body", draft.mail.body);
     }
   }, [draft, form]);
 
@@ -116,7 +112,13 @@ export const NewMailForm = ({ to }: { to?: string }) => {
 
     fd.append("to", data.to);
     fd.append("subject", data.subject);
-    fd.append("body", data.body);
+
+    if (data.body instanceof EditorState) {
+      fd.append("body", stateToHTML(data.body.getCurrentContent()));
+    } else {
+      fd.append("body", data.body);
+    }
+
     fd.append("encrypt", data.encrypt.toString());
 
     files?.forEach((f) => {
@@ -131,7 +133,13 @@ export const NewMailForm = ({ to }: { to?: string }) => {
 
     fd.append("to", data.to);
     fd.append("subject", data.subject);
-    fd.append("body", data.body);
+
+    if (data.body instanceof EditorState) {
+      fd.append("body", stateToHTML(data.body.getCurrentContent()));
+    } else {
+      fd.append("body", data.body);
+    }
+
     fd.append("encrypt", data.encrypt.toString());
 
     files?.forEach((f) => {
@@ -151,7 +159,10 @@ export const NewMailForm = ({ to }: { to?: string }) => {
           <Form {...form}>
             <form
               className="space-y-2"
-              onSubmit={form.handleSubmit(submit, console.error)}
+              onSubmit={form.handleSubmit(submit, (errs) => {
+                console.error(errs);
+                toast.error(JSON.stringify(errs));
+              })}
             >
               <FormField
                 name="to"
