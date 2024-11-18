@@ -61,7 +61,7 @@ export default function AuthForm({ onSuccess, cred }: Props) {
       return res;
     },
     onSuccess: (res, req) => {
-      login({ email: req.email, host: req.imap.host });
+      login({ email: req.email });
       toast.success("Успешная авторизация");
       if (onSuccess) {
         onSuccess(req, res);

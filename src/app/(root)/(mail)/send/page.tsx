@@ -3,7 +3,7 @@ import { NextPage } from "next";
 
 interface Props {
   searchParams: {
-    to?: string;
+    to?: string[];
   };
 }
 
