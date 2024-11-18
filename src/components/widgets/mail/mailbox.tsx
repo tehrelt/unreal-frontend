@@ -14,6 +14,8 @@ import { useInfiniteQuery, useMutation } from "@tanstack/react-query";
 import { mailService } from "@/services/mail";
 import { useIntersection } from "@/hooks/useIntersection";
 import { useUser } from "@/hooks/use-user";
+import { useMailboxes } from "@/hooks/mail/use-mailboxes";
+import { localFolder } from "@/const/attributes";
 
 interface Props {
   mailbox: string;
@@ -21,6 +23,7 @@ interface Props {
 
 export const Mailbox = ({ mailbox }: Props) => {
   const { data: user } = useUser();
+  const { data: mailboxes } = useMailboxes();
 
   const {
     data: messages,
@@ -86,7 +89,18 @@ export const Mailbox = ({ mailbox }: Props) => {
           </Button>
           <Badge className="rounded-lg px-4 py-2" variant={"secondary"}>
             <div className="flex gap-x-2 items-center w-full h-full">
-              <span className="text-5xl font-extrabold">{mailbox}</span>
+              <span className="text-5xl font-extrabold">
+                {(function () {
+                  const mb = mailboxes?.mailboxes.find(
+                    (m) => m.name === mailbox
+                  );
+                  if (!mb) {
+                    return mailbox == "INBOX" ? "Входящее" : mailbox;
+                  }
+
+                  return localFolder(mb.attributes);
+                })()}
+              </span>
               {isLoading ||
                 (isRefetching && (
                   <Skeleton className="h-6 w-6 rounded-full bg-primary-foreground" />
