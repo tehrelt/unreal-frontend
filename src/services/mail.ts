@@ -36,6 +36,12 @@ class MailService {
     return res.data;
   }
 
+  async raw(mailbox: string, mailnum: number) {
+    const ep = `/${mailbox}/${mailnum}/raw`;
+    const res = await api.get<MailResponse>(ep);
+    return res.data;
+  }
+
   async delete(mailbox: string, mailnum: number) {
     const ep = `/${mailbox}/${mailnum}`;
     const _ = await api.delete(ep);

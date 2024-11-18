@@ -68,11 +68,11 @@ export const Header = ({ className }: Props) => {
           health && (
             <p
               className={cn(
-                "flex",
+                "flex gap-x-1",
                 health.tlsEnabled ? "text-green-500" : "text-red-500"
               )}
             >
-              <Lock />
+              <Lock className="w-6 h-6" />
               TLS
             </p>
           )

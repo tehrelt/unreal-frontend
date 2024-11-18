@@ -5,6 +5,7 @@ import {
   ChevronDown,
   ChevronLeftIcon,
   ChevronUp,
+  Code,
   Lock,
   Trash,
 } from "lucide-react";
@@ -17,6 +18,7 @@ import { useMutation } from "@tanstack/react-query";
 import { mailService } from "@/services/mail";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { API_HOST } from "@/const/env";
 
 function From({ from, className }: { from: AddressInfo } & PropsWithClassname) {
   return (
@@ -131,12 +133,23 @@ export function MailHeader({ mailbox, mail }: { mailbox: string; mail: Mail }) {
       <Info mail={mail} mailbox={mailbox} className="pt-2" />
       <div className="flex flex-col justify-between items-end">
         <div className="text-muted-foreground">{datef(mail.sentDate)}</div>
-        {mail.encrypted && (
-          <div className="text-green-500 flex items-center">
-            <Lock />
-            Сообщение зашифровано
-          </div>
-        )}
+        <div className="flex gap-x-2 items-center">
+          <a
+            href={`${API_HOST}/${mailbox}/${mail.id}/raw`}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <Button className="h-fit p-2" variant={"ghost"}>
+              <Code className="w-6 h-6" />
+            </Button>
+          </a>
+          {mail.encrypted && (
+            <div className="text-green-500 flex gap-x-1 items-center">
+              <Lock className="w-6 h-6" />
+              Сообщение зашифровано
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
